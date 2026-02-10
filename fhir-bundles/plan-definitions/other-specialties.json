@@ -1,0 +1,517 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:pd-other-specialties",
+      "resource": {
+        "resourceType": "PlanDefinition",
+        "id": "pd-other-specialties",
+        "meta": {
+          "profile": [
+            "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-PlanDef-CaminoEspecialidad"
+          ]
+        },
+        "url": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-other-specialties",
+        "version": "1.0.0",
+        "name": "EPAPlanDefOtherSpecialties",
+        "title": "Otras Especialidades — Camino de Derivación EPA",
+        "status": "active",
+        "experimental": false,
+        "date": "2025-01-01",
+        "publisher": "EPA Bienestar",
+        "description": "Plan de derivación multi-especialidad complementaria basado en Life's Essential 8. Se activa cuando Score Global < 40, múltiples dimensiones < 50, o hallazgos en estudios iniciales. Incluye derivaciones a Nefrología, Neurología, Nutrición, Psicología, Oftalmología, Urología, Dermatología y Odontología según criterios específicos.",
+        "purpose": "Definir el camino de estudios y consultas complementarias personalizados según el score LE8 y hallazgos del paciente.",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/plan-definition-type",
+              "code": "clinical-protocol",
+              "display": "Clinical Protocol"
+            }
+          ]
+        },
+        "subjectCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/resource-types",
+              "code": "Patient"
+            }
+          ]
+        },
+        "useContext": [
+          {
+            "code": {
+              "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+              "code": "focus"
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "394802001",
+                  "display": "General medicine"
+                }
+              ]
+            }
+          }
+        ],
+        "relatedArtifact": [
+          {
+            "type": "depends-on",
+            "resource": "https://epa-bienestar.com.ar/fhir/Questionnaire/le8-assessment"
+          }
+        ],
+        "action": [
+          {
+            "title": "Derivaciones Complementarias",
+            "description": "Camino de derivaciones complementarias multi-especialidad. Se activa cuando: Score Global < 40 OR múltiples dimensiones < 50 OR hallazgos específicos en estudios iniciales.",
+            "code": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "3457005",
+                    "display": "Patient referral"
+                  }
+                ]
+              }
+            ],
+            "condition": [
+              {
+                "kind": "applicability",
+                "expression": {
+                  "description": "Score Global < 40 OR múltiples dimensiones con scores bajos",
+                  "language": "text/fhirpath",
+                  "expression": "(%resource.item.answer.valueInteger.sum() / 8) < 40"
+                }
+              }
+            ],
+            "groupingBehavior": "logical-group",
+            "selectionBehavior": "all",
+            "action": [
+              {
+                "title": "Consultas por Derivación",
+                "description": "Consultas con especialistas complementarios según perfil de riesgo y hallazgos.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "other-consult-nephrology",
+                    "title": "Consulta con Nefrología",
+                    "description": "Derivación a nefrología. Condicional: creatinina elevada o TFGe < 60 en estudios de laboratorio.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306286007",
+                            "display": "Referral to nephrologist"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-nephrology"
+                  },
+                  {
+                    "id": "other-consult-neurology",
+                    "title": "Consulta con Neurología",
+                    "description": "Derivación a neurología. Condicional: cefaleas + HTA o antecedentes familiares de ACV.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "PA < 40 — HTA severa con riesgo neurológico",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 40"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306118006",
+                            "display": "Referral to neurologist"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-neurology"
+                  },
+                  {
+                    "id": "other-consult-nutrition",
+                    "title": "Consulta con Nutrición",
+                    "description": "Derivación a nutrición. OBLIGATORIA — complemento del camino LE8 para todo paciente con Score Global < 40.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306354000",
+                            "display": "Referral to dietitian"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-nutrition"
+                  },
+                  {
+                    "id": "other-consult-psychology",
+                    "title": "Consulta con Psicología",
+                    "description": "Derivación a psicología. Obligatoria cuando Score Global < 40. Condicional: sueño < 40, fumador activo, stress.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306353006",
+                            "display": "Referral to psychologist"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-psychology"
+                  },
+                  {
+                    "id": "other-consult-ophthalmology",
+                    "title": "Consulta con Oftalmología",
+                    "description": "Derivación a oftalmología. Condicional: diabético, HTA, o > 50 años. Filtrado por edad lo resuelve el bot.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Glucemia < 50 OR PA < 50 — diabético o hipertenso con riesgo oftalmológico. Filtrado por edad > 50 lo resuelve el bot.",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-glucose').answer.valueInteger < 50 or %resource.item.where(linkId='blood-pressure').answer.valueInteger < 50"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306130009",
+                            "display": "Referral to ophthalmologist"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-ophthalmology"
+                  },
+                  {
+                    "id": "other-consult-urology",
+                    "title": "Consulta con Urología",
+                    "description": "Derivación a urología. Condicional: hombres > 50 años. Filtrado por sexo/edad lo resuelve el bot.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306253008",
+                            "display": "Referral to urologist"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-urology"
+                  },
+                  {
+                    "id": "other-consult-dermatology",
+                    "title": "Consulta con Dermatología",
+                    "description": "Derivación a dermatología para screening de lesiones pigmentadas. Recomendado.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306126006",
+                            "display": "Referral to dermatologist"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-dermatology"
+                  },
+                  {
+                    "id": "other-consult-dentistry",
+                    "title": "Consulta con Odontología",
+                    "description": "Derivación a odontología para evaluación periodontal. Recomendado — relación entre enfermedad periodontal y riesgo cardiovascular.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "306136002",
+                            "display": "Referral to dentist"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-dentistry"
+                  }
+                ]
+              },
+              {
+                "title": "Laboratorio Complementario",
+                "description": "Estudios de laboratorio complementarios para evaluación multi-especialidad.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "other-lab-creatinine-gfr",
+                    "title": "Creatinina + TFGe (Nefrología)",
+                    "description": "Creatinina sérica con cálculo de tasa de filtrado glomerular estimada. Obligatorio — screening renal.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "2160-0",
+                            "display": "Creatinine [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-creatinine-gfr"
+                  },
+                  {
+                    "id": "other-lab-microalbumin",
+                    "title": "Microalbuminuria (Nefrología)",
+                    "description": "Microalbuminuria en orina. Obligatorio — marcador temprano de daño renal en diabéticos e hipertensos.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "14957-5",
+                            "display": "Microalbumin [Mass/volume] in Urine"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-microalbumin"
+                  },
+                  {
+                    "id": "other-lab-psa",
+                    "title": "PSA total + libre (Urología, >50)",
+                    "description": "Antígeno prostático específico total y libre. Condicional: hombres > 50 años. Filtrado por sexo/edad lo resuelve el bot.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "2857-1",
+                            "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-psa"
+                  },
+                  {
+                    "id": "other-lab-hepatic-panel",
+                    "title": "Hepatograma completo",
+                    "description": "Panel hepático completo (GOT, GPT, GGT, FAL, bilirrubina). Obligatorio — evaluación hepática integral.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "24325-3",
+                            "display": "Hepatic function 2000 panel - Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-hepatic-panel"
+                  },
+                  {
+                    "id": "other-lab-ferritin-iron",
+                    "title": "Ferritina + hierro sérico",
+                    "description": "Ferritina e hierro sérico. Recomendado — evaluación de reservas de hierro y screening de hemocromatosis.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "2276-4",
+                            "display": "Ferritin [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-ferritin-iron"
+                  }
+                ]
+              },
+              {
+                "title": "Imágenes Complementarias",
+                "description": "Estudios de imagen complementarios por derivación.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "other-img-fundoscopy",
+                    "title": "Fondo de ojo (Oftalmología)",
+                    "description": "Examen de fondo de ojo. Condicional: diabético, hipertenso, o > 50 años.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Glucemia < 50 OR PA < 50 — diabético o hipertenso con riesgo de retinopatía",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-glucose').answer.valueInteger < 50 or %resource.item.where(linkId='blood-pressure').answer.valueInteger < 50"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "252779009",
+                            "display": "Ophthalmoscopy"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-fundoscopy"
+                  },
+                  {
+                    "id": "other-img-renal-us",
+                    "title": "Ecografía renal bilateral",
+                    "description": "Ecografía renal bilateral. Condicional: creatinina elevada o TFGe alterada en laboratorio.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "13848000",
+                            "display": "Ultrasonography of kidney"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-renal-us"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "PlanDefinition/pd-other-specialties"
+      }
+    }
+  ]
+}
