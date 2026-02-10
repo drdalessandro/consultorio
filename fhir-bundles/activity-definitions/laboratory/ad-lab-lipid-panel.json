@@ -1,0 +1,93 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-lab-lipid-panel",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Laboratory"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-lipid-panel",
+  "version": "1.0.0",
+  "name": "EPALabLipidPanel",
+  "title": "Perfil lipídico completo",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Perfil lipídico completo que incluye colesterol total, HDL, LDL directo, triglicéridos y VLDL. Estudio obligatorio en toda derivación cardiológica para evaluación de riesgo cardiovascular según Life's Essential 8.",
+  "purpose": "Evaluar el perfil lipídico del paciente como parte del camino de derivación cardiológica EPA.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "57698-3",
+        "display": "Lipid panel with direct LDL"
+      }
+    ],
+    "text": "Perfil lipídico completo (Colesterol total, HDL, LDL, Triglicéridos, VLDL)"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394579002",
+            "display": "Cardiology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "obligatorio"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "cardiology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "Ayuno de 12 horas previas a la extracción. No consumir alcohol 72 horas antes. Suspender suplementos de omega-3 según indicación médica."
+    }
+  ],
+  "observationResultRequirement": [
+    {
+      "reference": "ObservationDefinition/obs-cholesterol-total",
+      "display": "Colesterol total"
+    },
+    {
+      "reference": "ObservationDefinition/obs-hdl",
+      "display": "HDL colesterol"
+    },
+    {
+      "reference": "ObservationDefinition/obs-ldl-direct",
+      "display": "LDL colesterol directo"
+    },
+    {
+      "reference": "ObservationDefinition/obs-triglycerides",
+      "display": "Triglicéridos"
+    },
+    {
+      "reference": "ObservationDefinition/obs-vldl",
+      "display": "VLDL colesterol"
+    }
+  ]
+}
