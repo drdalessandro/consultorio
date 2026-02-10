@@ -1,0 +1,708 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:pd-cardiology",
+      "resource": {
+        "resourceType": "PlanDefinition",
+        "id": "pd-cardiology",
+        "meta": {
+          "profile": [
+            "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-PlanDef-CaminoEspecialidad"
+          ]
+        },
+        "url": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-cardiology",
+        "version": "1.0.0",
+        "name": "EPAPlanDefCardiology",
+        "title": "Cardiología — Camino de Derivación EPA",
+        "status": "active",
+        "experimental": false,
+        "date": "2025-01-01",
+        "publisher": "EPA Bienestar",
+        "description": "Plan de derivación cardiológica basado en Life's Essential 8. Se activa cuando PA < 60, Colesterol < 50, o Score Global < 50. Genera automáticamente consultas, estudios de laboratorio, imágenes y alta complejidad según la severidad del score.",
+        "purpose": "Definir el camino de estudios y consultas cardiológicas personalizados según el score LE8 del paciente.",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/plan-definition-type",
+              "code": "clinical-protocol",
+              "display": "Clinical Protocol"
+            }
+          ]
+        },
+        "subjectCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/resource-types",
+              "code": "Patient"
+            }
+          ]
+        },
+        "useContext": [
+          {
+            "code": {
+              "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+              "code": "focus"
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "394579002",
+                  "display": "Cardiology"
+                }
+              ]
+            }
+          }
+        ],
+        "relatedArtifact": [
+          {
+            "type": "depends-on",
+            "resource": "https://epa-bienestar.com.ar/fhir/Questionnaire/le8-assessment"
+          }
+        ],
+        "action": [
+          {
+            "title": "Derivación Cardiológica",
+            "description": "Camino completo de cardiología. Se activa cuando: Presión Arterial < 60 OR Colesterol < 50 OR Score Global < 50.",
+            "code": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "306253008",
+                    "display": "Referral to cardiologist"
+                  }
+                ]
+              }
+            ],
+            "condition": [
+              {
+                "kind": "applicability",
+                "expression": {
+                  "description": "PA < 60 OR Colesterol < 50 OR Score Global < 50",
+                  "language": "text/fhirpath",
+                  "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 60 or %resource.item.where(linkId='blood-lipids').answer.valueInteger < 50 or (%resource.item.answer.valueInteger.sum() / 8) < 50"
+                }
+              }
+            ],
+            "groupingBehavior": "logical-group",
+            "selectionBehavior": "all",
+            "action": [
+              {
+                "title": "Consultas Cardiológicas",
+                "description": "Consultas con cardiología: evaluación inicial, control post-estudios y seguimiento.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "title": "Consulta cardiológica de evaluación inicial",
+                    "description": "Primera consulta con cardiólogo para evaluación clínica y solicitud de estudios.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "185347001",
+                            "display": "Encounter for problem"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-cardio-eval"
+                  },
+                  {
+                    "title": "Control post-estudios con resultados",
+                    "description": "Consulta de revisión de resultados de estudios cardiológicos.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "390906007",
+                            "display": "Follow-up encounter"
+                          }
+                        ]
+                      }
+                    ],
+                    "relatedAction": [
+                      {
+                        "actionId": "cardio-eval-initial",
+                        "relationship": "after"
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-cardio-post"
+                  },
+                  {
+                    "title": "Consulta de seguimiento (30/60/90 días)",
+                    "description": "Seguimiento cardiológico periódico para evaluar evolución y adherencia al tratamiento.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "390906007",
+                            "display": "Follow-up encounter"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-cardio-followup"
+                  }
+                ]
+              },
+              {
+                "title": "Laboratorio Cardiológico",
+                "description": "Estudios de laboratorio para evaluación de riesgo cardiovascular. Incluye panel obligatorio y estudios condicionales según severidad.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "cardio-lab-lipid-panel",
+                    "title": "Perfil lipídico completo",
+                    "description": "Colesterol total, HDL, LDL, triglicéridos, VLDL. Obligatorio en toda derivación cardiológica.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "57698-3",
+                            "display": "Lipid panel with direct LDL"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-lipid-panel"
+                  },
+                  {
+                    "id": "cardio-lab-crp-hs",
+                    "title": "PCR ultrasensible",
+                    "description": "Proteína C reactiva de alta sensibilidad. Marcador de inflamación vascular. Obligatorio.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "30522-7",
+                            "display": "C reactive protein [Mass/volume] in Serum or Plasma by High sensitivity method"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-crp-hs"
+                  },
+                  {
+                    "id": "cardio-lab-troponin-t",
+                    "title": "Troponina T alta sensibilidad",
+                    "description": "Marcador de daño miocárdico. Condicional: se solicita cuando PA < 40 AND Colesterol < 40 (riesgo severo).",
+                    "priority": "urgent",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "PA < 40 AND Colesterol < 40 — riesgo cardiovascular severo",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 40 and %resource.item.where(linkId='blood-lipids').answer.valueInteger < 40"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "67151-1",
+                            "display": "Troponin T.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-troponin-t-hs"
+                  },
+                  {
+                    "id": "cardio-lab-nt-probnp",
+                    "title": "NT-proBNP",
+                    "description": "Péptido natriurético cerebral. Marcador de insuficiencia cardíaca. Condicional: PA < 40 AND Colesterol < 40.",
+                    "priority": "urgent",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "PA < 40 AND Colesterol < 40 — riesgo cardiovascular severo",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 40 and %resource.item.where(linkId='blood-lipids').answer.valueInteger < 40"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "33762-6",
+                            "display": "NT-proBNP [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-nt-probnp"
+                  },
+                  {
+                    "id": "cardio-lab-lpa",
+                    "title": "Lipoproteína (a)",
+                    "description": "Factor de riesgo cardiovascular independiente. Recomendado, especialmente con antecedentes familiares CV.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "10835-7",
+                            "display": "Lipoprotein (a) [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-lpa"
+                  },
+                  {
+                    "id": "cardio-lab-apob",
+                    "title": "Apolipoproteína B",
+                    "description": "Marcador de partículas aterogénicas. Recomendado para evaluación avanzada de riesgo lipídico.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "1884-6",
+                            "display": "Apolipoprotein B [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-apob"
+                  }
+                ]
+              },
+              {
+                "title": "Imágenes Cardiológicas",
+                "description": "Estudios de diagnóstico por imagen cardiovascular. Panel obligatorio con Eco Doppler MMII condicional.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "cardio-img-ecg",
+                    "title": "ECG 12 derivaciones",
+                    "description": "Electrocardiograma estándar de 12 derivaciones. Obligatorio en toda derivación cardiológica.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "164847006",
+                            "display": "Standard 12-lead electrocardiogram"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-ecg-12lead"
+                  },
+                  {
+                    "id": "cardio-img-echo-doppler",
+                    "title": "Ecocardiograma Doppler color",
+                    "description": "Evaluación estructural y funcional cardíaca. Obligatorio.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "40701008",
+                            "display": "Echocardiography"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-echo-doppler"
+                  },
+                  {
+                    "id": "cardio-img-echo-tsa",
+                    "title": "Eco Doppler vasos de cuello (TSA)",
+                    "description": "Evaluación de troncos supraaórticos para detección de aterosclerosis carotídea. Obligatorio.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "709020003",
+                            "display": "Doppler ultrasonography of carotid arteries"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-echo-tsa"
+                  },
+                  {
+                    "id": "cardio-img-echo-mmii",
+                    "title": "Eco Doppler arterial MMII",
+                    "description": "Evaluación de arterias de miembros inferiores. Condicional: se solicita en riesgo severo.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "PA < 40 OR Colesterol < 40 — riesgo vascular periférico",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 40 or %resource.item.where(linkId='blood-lipids').answer.valueInteger < 40"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "241571004",
+                            "display": "Doppler ultrasonography of lower extremity arteries"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-echo-mmii"
+                  }
+                ]
+              },
+              {
+                "title": "Alta Complejidad Cardiológica",
+                "description": "Estudios de alta complejidad. Ergometría obligatoria; otros condicionales o especializados según severidad y hallazgos previos.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "cardio-hc-ergometry",
+                    "title": "Ergometría / PEG",
+                    "description": "Prueba ergométrica graduada. Obligatoria en toda derivación cardiológica.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "76746007",
+                            "display": "Cardiovascular stress testing"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-ergometry"
+                  },
+                  {
+                    "id": "cardio-hc-calcium-score",
+                    "title": "Score de Calcio coronario (Angio-TC)",
+                    "description": "Cuantificación de calcio coronario por tomografía. Condicional: PA < 40 AND Col < 40, o antecedentes familiares CV.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "PA < 40 AND Colesterol < 40 — riesgo severo requiere evaluación coronaria",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 40 and %resource.item.where(linkId='blood-lipids').answer.valueInteger < 40"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "418714002",
+                            "display": "Coronary artery calcium score measurement"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-calcium-score"
+                  },
+                  {
+                    "id": "cardio-hc-abpm",
+                    "title": "MAPA 24hs",
+                    "description": "Monitoreo ambulatorio de presión arterial 24 horas. Condicional: PA < 50 para evaluación detallada del perfil tensional.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "PA < 50 — evaluación detallada de perfil tensional",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 50"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "252076005",
+                            "display": "Ambulatory blood pressure monitoring"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-abpm-24h"
+                  },
+                  {
+                    "id": "cardio-hc-holter",
+                    "title": "Holter ECG 24hs",
+                    "description": "Monitoreo electrocardiográfico continuo 24 horas. Condicional: PA < 40 para detección de arritmias asociadas.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "PA < 40 — riesgo severo, screening de arritmias",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 40"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "252239006",
+                            "display": "Continuous ambulatory electrocardiographic monitoring"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-holter-24h"
+                  },
+                  {
+                    "id": "cardio-hc-cardiac-mri",
+                    "title": "RMN cardíaca",
+                    "description": "Resonancia magnética cardíaca. Especializado: requiere evaluación previa y autorización explícita del cardiólogo.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "especializado"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Requiere autorización explícita del cardiólogo tras evaluación de estudios previos",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 30 and %resource.item.where(linkId='blood-lipids').answer.valueInteger < 30"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "241620005",
+                            "display": "Magnetic resonance imaging of heart"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-cardiac-mri"
+                  },
+                  {
+                    "id": "cardio-hc-spect",
+                    "title": "SPECT / PCI cardíaco",
+                    "description": "Perfusión miocárdica con radioisótopos. Especializado: requiere evaluación previa y autorización explícita.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "especializado"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Requiere autorización explícita del cardiólogo tras evaluación de estudios previos",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 30 and %resource.item.where(linkId='blood-lipids').answer.valueInteger < 30"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "373205008",
+                            "display": "Nuclear medicine imaging of heart"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-spect-cardiac"
+                  },
+                  {
+                    "id": "cardio-hc-coronary-angio",
+                    "title": "Coronariografía",
+                    "description": "Cateterismo cardíaco con angiografía coronaria. Especializado: solo ante hallazgos positivos en estudios funcionales previos.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "especializado"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Requiere autorización explícita del cardiólogo — hallazgos positivos en estudios funcionales",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 30 and %resource.item.where(linkId='blood-lipids').answer.valueInteger < 30"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "33367005",
+                            "display": "Coronary arteriography"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-coronary-angio"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "PlanDefinition/pd-cardiology"
+      }
+    }
+  ]
+}
