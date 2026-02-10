@@ -1,0 +1,313 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:q-le8-assessment",
+      "resource": {
+        "resourceType": "Questionnaire",
+        "id": "q-le8-assessment",
+        "meta": {
+          "profile": [
+            "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-Questionnaire-LE8"
+          ]
+        },
+        "url": "https://epa-bienestar.com.ar/fhir/Questionnaire/le8-assessment",
+        "version": "1.0.0",
+        "name": "LE8Assessment",
+        "title": "Life's Essential 8 — Evaluación Cardiovascular",
+        "status": "active",
+        "date": "2025-01-01",
+        "publisher": "EPA Bienestar",
+        "description": "Cuestionario de evaluación cardiovascular basado en Life's Essential 8 (AHA). Cada dimensión se puntúa de 0 (peor) a 100 (óptimo).",
+        "purpose": "Evaluar el score cardiovascular del paciente en 8 dimensiones para generar derivación multi-especialidad automática.",
+        "subjectType": ["Patient"],
+        "code": [
+          {
+            "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+            "code": "le8-global",
+            "display": "Life's Essential 8 — Score Global"
+          }
+        ],
+        "item": [
+          {
+            "linkId": "diet",
+            "text": "Alimentación / Dieta",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "diet",
+                "display": "Alimentación"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "physical-activity",
+            "text": "Actividad Física",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "physical-activity",
+                "display": "Actividad Física"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "nicotine",
+            "text": "Exposición a Nicotina / Tabaquismo",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "nicotine",
+                "display": "Tabaquismo"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "sleep",
+            "text": "Salud del Sueño",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "sleep",
+                "display": "Sueño"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "weight-bmi",
+            "text": "Peso Corporal / Índice de Masa Corporal",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "weight-bmi",
+                "display": "Peso / IMC"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "blood-lipids",
+            "text": "Lípidos en Sangre / Colesterol",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "blood-lipids",
+                "display": "Colesterol"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "blood-glucose",
+            "text": "Glucemia en Sangre",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "blood-glucose",
+                "display": "Glucemia"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "blood-pressure",
+            "text": "Presión Arterial",
+            "type": "integer",
+            "required": true,
+            "code": [
+              {
+                "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+                "code": "blood-pressure",
+                "display": "Presión Arterial"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                "valueInteger": 0
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                "valueInteger": 100
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/questionnaire-item-control",
+                      "code": "slider"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Questionnaire/q-le8-assessment"
+      }
+    }
+  ]
+}
