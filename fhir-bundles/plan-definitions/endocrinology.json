@@ -1,0 +1,623 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:pd-endocrinology",
+      "resource": {
+        "resourceType": "PlanDefinition",
+        "id": "pd-endocrinology",
+        "meta": {
+          "profile": [
+            "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-PlanDef-CaminoEspecialidad"
+          ]
+        },
+        "url": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-endocrinology",
+        "version": "1.0.0",
+        "name": "EPAPlanDefEndocrinology",
+        "title": "Endocrinología — Camino de Derivación EPA",
+        "status": "active",
+        "experimental": false,
+        "date": "2025-01-01",
+        "publisher": "EPA Bienestar",
+        "description": "Plan de derivación endocrinológica basado en Life's Essential 8. Se activa cuando Glucemia < 50, IMC/Peso < 50, o Score Global < 45. Genera consultas metabólicas, estudios de laboratorio glucídico/tiroideo, imágenes y estudios de alta complejidad según severidad.",
+        "purpose": "Definir el camino de estudios y consultas endocrinológicas personalizados según el score LE8 del paciente.",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/plan-definition-type",
+              "code": "clinical-protocol",
+              "display": "Clinical Protocol"
+            }
+          ]
+        },
+        "subjectCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/resource-types",
+              "code": "Patient"
+            }
+          ]
+        },
+        "useContext": [
+          {
+            "code": {
+              "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+              "code": "focus"
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "394583002",
+                  "display": "Endocrinology"
+                }
+              ]
+            }
+          }
+        ],
+        "relatedArtifact": [
+          {
+            "type": "depends-on",
+            "resource": "https://epa-bienestar.com.ar/fhir/Questionnaire/le8-assessment"
+          }
+        ],
+        "action": [
+          {
+            "title": "Derivación Endocrinológica",
+            "description": "Camino completo de endocrinología. Se activa cuando: Glucemia < 50 OR IMC/Peso < 50 OR Score Global < 45.",
+            "code": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "306117001",
+                    "display": "Referral to endocrinologist"
+                  }
+                ]
+              }
+            ],
+            "condition": [
+              {
+                "kind": "applicability",
+                "expression": {
+                  "description": "Glucemia < 50 OR IMC/Peso < 50 OR Score Global < 45",
+                  "language": "text/fhirpath",
+                  "expression": "%resource.item.where(linkId='blood-glucose').answer.valueInteger < 50 or %resource.item.where(linkId='weight-bmi').answer.valueInteger < 50 or (%resource.item.answer.valueInteger.sum() / 8) < 45"
+                }
+              }
+            ],
+            "groupingBehavior": "logical-group",
+            "selectionBehavior": "all",
+            "action": [
+              {
+                "title": "Consultas Endocrinológicas",
+                "description": "Consultas con endocrinología: evaluación metabólica, control con resultados, seguimiento nutricional y evaluación tiroidea.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "endo-consult-eval",
+                    "title": "Consulta endocrinológica de evaluación",
+                    "description": "Primera consulta con endocrinólogo para evaluación metabólica integral.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "185347001",
+                            "display": "Encounter for problem"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-endo-eval"
+                  },
+                  {
+                    "id": "endo-consult-metabolic",
+                    "title": "Control metabólico con resultados",
+                    "description": "Consulta de revisión de resultados de estudios metabólicos y ajuste de plan terapéutico.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "390906007",
+                            "display": "Follow-up encounter"
+                          }
+                        ]
+                      }
+                    ],
+                    "relatedAction": [
+                      {
+                        "actionId": "endo-consult-eval",
+                        "relationship": "after"
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-endo-metabolic"
+                  },
+                  {
+                    "id": "endo-consult-nutritional",
+                    "title": "Seguimiento plan nutricional + metabólico",
+                    "description": "Seguimiento del plan nutricional y metabólico. Control de adherencia y evolución.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "390906007",
+                            "display": "Follow-up encounter"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-endo-nutritional"
+                  },
+                  {
+                    "id": "endo-consult-thyroid",
+                    "title": "Evaluación tiroidea (si TSH alterada)",
+                    "description": "Evaluación tiroidea especializada. Condicional: solo ante TSH alterada en estudios de laboratorio.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "185347001",
+                            "display": "Encounter for problem"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-endo-thyroid"
+                  }
+                ]
+              },
+              {
+                "title": "Laboratorio Endocrinológico",
+                "description": "Estudios de laboratorio para evaluación metabólica. Incluye panel glucídico obligatorio, perfil tiroideo y estudios condicionales según severidad.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "endo-lab-fasting-glucose",
+                    "title": "Glucemia en ayunas",
+                    "description": "Glucosa en ayunas. Obligatorio en toda derivación endocrinológica.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "1558-6",
+                            "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-fasting-glucose"
+                  },
+                  {
+                    "id": "endo-lab-hba1c",
+                    "title": "HbA1c",
+                    "description": "Hemoglobina glicosilada A1c. Obligatorio — evaluación del control glucémico a 3 meses.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "4548-4",
+                            "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-hba1c"
+                  },
+                  {
+                    "id": "endo-lab-homa-ir",
+                    "title": "Índice HOMA-IR",
+                    "description": "Índice de resistencia a la insulina (HOMA-IR). Obligatorio — calculado a partir de glucemia e insulinemia basales.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "pending",
+                            "display": "HOMA-IR index"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-homa-ir"
+                  },
+                  {
+                    "id": "endo-lab-insulin",
+                    "title": "Insulinemia basal",
+                    "description": "Insulina basal en ayunas. Obligatorio — necesario para cálculo de HOMA-IR.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "20448-7",
+                            "display": "Insulin [Units/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-insulin-basal"
+                  },
+                  {
+                    "id": "endo-lab-thyroid-panel",
+                    "title": "Perfil tiroideo (TSH, T4L, T3L)",
+                    "description": "Panel tiroideo completo: TSH, T4 libre, T3 libre. Obligatorio en evaluación endocrinológica.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "obligatorio"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "3016-3",
+                            "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-thyroid-panel"
+                  },
+                  {
+                    "id": "endo-lab-cortisol",
+                    "title": "Cortisol matutino",
+                    "description": "Cortisol sérico matutino. Condicional: se solicita cuando IMC > 35 o sospecha de síndrome de Cushing.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "IMC/Peso < 30 (score bajo = IMC alto) — sospecha de síndrome metabólico severo",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='weight-bmi').answer.valueInteger < 30"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "2143-6",
+                            "display": "Cortisol [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-cortisol-am"
+                  },
+                  {
+                    "id": "endo-lab-ogtt",
+                    "title": "PTOG 75g (si prediabetes)",
+                    "description": "Prueba de tolerancia oral a la glucosa 75g. Condicional: se solicita cuando HbA1c > 5.7% (prediabetes).",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Glucemia < 40 — riesgo glucémico elevado, evaluar prediabetes con PTOG",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='blood-glucose').answer.valueInteger < 40"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "1518-0",
+                            "display": "Glucose [Mass/volume] in Serum or Plasma --2 hours post 75 g glucose PO"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-ogtt-75g"
+                  },
+                  {
+                    "id": "endo-lab-b12-folate",
+                    "title": "Vitamina B12 + Ácido fólico",
+                    "description": "Vitamina B12 y ácido fólico séricos. Recomendado para evaluación nutricional complementaria.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://loinc.org",
+                            "code": "2132-9",
+                            "display": "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-b12-folate"
+                  }
+                ]
+              },
+              {
+                "title": "Imágenes Endocrinológicas",
+                "description": "Estudios de diagnóstico por imagen para evaluación endocrinológica.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "endo-img-thyroid-us",
+                    "title": "Ecografía tiroidea",
+                    "description": "Ecografía de tiroides. Condicional: se solicita ante TSH alterada o palpación tiroidea anormal.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "274692002",
+                            "display": "Ultrasonography of thyroid"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-thyroid-us"
+                  },
+                  {
+                    "id": "endo-img-abdominal-us",
+                    "title": "Ecografía abdominal (hígado graso)",
+                    "description": "Ecografía abdominal superior para evaluación de esteatosis hepática (hígado graso). Recomendado en síndrome metabólico.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "45036003",
+                            "display": "Ultrasonography of abdomen"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-abdominal-us"
+                  },
+                  {
+                    "id": "endo-img-dexa-body",
+                    "title": "Composición corporal (DEXA body)",
+                    "description": "Densitometría corporal total para composición corporal (masa grasa/magra). Recomendado en evaluación metabólica.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "recomendado"
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "312681000",
+                            "display": "Dual energy X-ray absorptiometry"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-dexa-body"
+                  }
+                ]
+              },
+              {
+                "title": "Alta Complejidad Endocrinológica",
+                "description": "Estudios de alta complejidad endocrinológicos. Condicionales y especializados según hallazgos.",
+                "groupingBehavior": "logical-group",
+                "selectionBehavior": "all",
+                "action": [
+                  {
+                    "id": "endo-hc-thyroid-fna",
+                    "title": "PAAF tiroidea (si nódulo)",
+                    "description": "Punción aspiración con aguja fina de nódulo tiroideo. Especializado: requiere hallazgo de nódulo sospechoso en ecografía tiroidea.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "especializado"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Requiere hallazgo de nódulo tiroideo sospechoso en ecografía — autorización del endocrinólogo",
+                          "language": "text/fhirpath",
+                          "expression": "true"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "14766002",
+                            "display": "Fine needle aspiration biopsy of thyroid"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-thyroid-fna"
+                  },
+                  {
+                    "id": "endo-hc-fibroscan",
+                    "title": "Elastografía hepática (FibroScan)",
+                    "description": "Elastografía transitoria hepática para evaluación de fibrosis. Condicional: IMC/Peso < 30 (obesidad) con sospecha de NASH.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "condicional"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "IMC/Peso < 30 (score bajo = obesidad) — evaluación de NASH/fibrosis hepática",
+                          "language": "text/fhirpath",
+                          "expression": "%resource.item.where(linkId='weight-bmi').answer.valueInteger < 30"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "709002000",
+                            "display": "Transient elastography of liver"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-fibroscan"
+                  },
+                  {
+                    "id": "endo-hc-calorimetry",
+                    "title": "Calorimetría indirecta",
+                    "description": "Calorimetría indirecta para medición del gasto energético basal. Especializado: requiere evaluación previa del endocrinólogo.",
+                    "priority": "routine",
+                    "extension": [
+                      {
+                        "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+                        "valueCode": "especializado"
+                      }
+                    ],
+                    "condition": [
+                      {
+                        "kind": "applicability",
+                        "expression": {
+                          "description": "Requiere autorización del endocrinólogo — evaluación personalizada del metabolismo basal",
+                          "language": "text/fhirpath",
+                          "expression": "true"
+                        }
+                      }
+                    ],
+                    "code": [
+                      {
+                        "coding": [
+                          {
+                            "system": "http://snomed.info/sct",
+                            "code": "252050006",
+                            "display": "Indirect calorimetry"
+                          }
+                        ]
+                      }
+                    ],
+                    "definitionCanonical": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-calorimetry"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "PlanDefinition/pd-endocrinology"
+      }
+    }
+  ]
+}
