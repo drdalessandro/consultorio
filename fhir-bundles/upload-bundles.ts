@@ -6,6 +6,12 @@
  * Lee todos los JSONs de fhir-bundles/ y los sube como Transaction Bundles
  * a la API FHIR de Medplum usando @medplum/core SDK.
  *
+ * Medplum self-hosted requiere IDs en formato UUID (server-assigned).
+ * Este script:
+ *   - Elimina el campo "id" de cada recurso antes de subir
+ *   - Usa conditional PUT (ResourceType?url=<canonical>) para idempotencia
+ *   - Mantiene fullUrl con la URL canónica para resolución de referencias internas
+ *
  * Uso:
  *   npx ts-node upload-bundles.ts
  *
@@ -27,9 +33,6 @@ import * as path from 'path';
 // Directorio raíz de los bundles (mismo directorio que este script)
 const BUNDLES_DIR = path.resolve(__dirname);
 
-// Base URL para construir fullUrl canónicas
-const FHIR_BASE = 'https://epa-bienestar.com.ar/fhir';
-
 // Archivos en la raíz que NO son recursos FHIR
 const IGNORED_FILES = new Set(['package.json', 'package-lock.json', 'tsconfig.json']);
 
@@ -41,28 +44,22 @@ const UPLOAD_ORDER = [
   'questionnaires',
 ];
 
-// Regex FHIR para validar IDs: [A-Za-z0-9\-\.]{1,64}
-const FHIR_ID_REGEX = /^[A-Za-z0-9\-.]{1,64}$/;
+// Errores que no se deben reintentar (errores de validación/cliente)
+const NON_RETRYABLE_ERRORS = [
+  'Invalid id',
+  'Invalid resource type',
+  'Bad Request',
+  'Not found',
+  'Unauthorized',
+  'Forbidden',
+  'OperationOutcome',
+];
 
 interface UploadResult {
   file: string;
   status: 'ok' | 'error' | 'skipped';
   resourceCount: number;
   detail?: string;
-}
-
-/**
- * Valida que un ID cumpla con la especificación FHIR R4.
- */
-function isValidFhirId(id: string): boolean {
-  return FHIR_ID_REGEX.test(id);
-}
-
-/**
- * Sanitiza un ID para que sea válido en FHIR: reemplaza caracteres inválidos con guiones.
- */
-function sanitizeFhirId(id: string): string {
-  return id.replace(/[^A-Za-z0-9\-.]/g, '-').slice(0, 64);
 }
 
 /**
@@ -89,130 +86,83 @@ function findJsonFiles(dir: string): string[] {
 }
 
 /**
- * Repara fullUrl inválidos dentro de un Bundle existente.
- * Cambia urn:uuid:<non-uuid> por la URL canónica del recurso.
+ * Prepara un entry del Bundle para Medplum:
+ * - Elimina el campo "id" del recurso (Medplum asigna UUIDs)
+ * - Usa conditional PUT con ?url=<canonical> si el recurso tiene campo "url"
+ * - Usa POST si no tiene campo "url"
+ * - Establece fullUrl con la URL canónica del recurso
  */
-function fixBundleFullUrls(bundle: Bundle): Bundle {
-  if (!bundle.entry) return bundle;
+function prepareEntryForMedplum(entry: BundleEntry): BundleEntry {
+  const resource = entry.resource as any;
+  if (!resource?.resourceType) return entry;
 
-  for (const entry of bundle.entry) {
-    if (!entry.fullUrl) continue;
+  const canonicalUrl = resource.url as string | undefined;
+  const resourceType = resource.resourceType as string;
 
-    // Si fullUrl usa urn:uuid: pero el valor NO es un UUID válido, corregir
-    if (entry.fullUrl.startsWith('urn:uuid:')) {
-      const uuidPart = entry.fullUrl.slice('urn:uuid:'.length);
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  // Eliminar el id — Medplum asignará un UUID
+  delete resource.id;
 
-      if (!uuidRegex.test(uuidPart) && entry.resource) {
-        const resource = entry.resource as any;
-        if (resource.resourceType && resource.id) {
-          entry.fullUrl = `${FHIR_BASE}/${resource.resourceType}/${resource.id}`;
-        }
-      }
-    }
+  if (canonicalUrl) {
+    // Conditional PUT: idempotente, busca por URL canónica
+    return {
+      fullUrl: canonicalUrl,
+      resource,
+      request: {
+        method: 'PUT',
+        url: `${resourceType}?url=${encodeURIComponent(canonicalUrl)}`,
+      },
+    };
   }
 
-  return bundle;
+  // Sin URL canónica — usar POST (Medplum crea recurso nuevo)
+  return {
+    resource,
+    request: {
+      method: 'POST',
+      url: resourceType,
+    },
+  };
 }
 
 /**
- * Valida y repara IDs de recursos dentro de un Bundle.
- * Retorna lista de warnings si hubo correcciones.
+ * Lee un JSON y lo convierte en un Transaction Bundle listo para Medplum.
+ * - Si ya es un Bundle transaction, transforma cada entry.
+ * - Si es un recurso individual, lo envuelve en un transaction Bundle.
  */
-function validateAndFixIds(bundle: Bundle, filePath: string): string[] {
-  const warnings: string[] = [];
-
-  if (!bundle.entry) return warnings;
-
-  for (const entry of bundle.entry) {
-    const resource = entry.resource as any;
-    if (!resource?.id) continue;
-
-    if (!isValidFhirId(resource.id)) {
-      const originalId = resource.id;
-      resource.id = sanitizeFhirId(resource.id);
-      warnings.push(`ID corregido: "${originalId}" → "${resource.id}"`);
-
-      // Actualizar request.url si usa el ID original
-      if (entry.request?.url?.includes(originalId)) {
-        entry.request.url = entry.request.url.replace(originalId, resource.id);
-      }
-
-      // Actualizar fullUrl si contiene el ID original
-      if (entry.fullUrl?.includes(originalId)) {
-        entry.fullUrl = entry.fullUrl.replace(originalId, resource.id);
-      }
-    }
-  }
-
-  return warnings;
-}
-
-/**
- * Lee un JSON y lo convierte en un Transaction Bundle si es necesario.
- * - Si ya es un Bundle transaction, repara fullUrls inválidos y lo retorna.
- * - Si es un recurso individual, lo envuelve en un transaction Bundle con PUT.
- */
-function toTransactionBundle(filePath: string): { bundle: Bundle; resourceCount: number; warnings: string[] } {
+function toTransactionBundle(filePath: string): { bundle: Bundle; resourceCount: number } {
   const raw = fs.readFileSync(filePath, 'utf-8');
   const json = JSON.parse(raw);
 
-  // Ya es un Transaction Bundle
+  // Ya es un Transaction Bundle — transformar cada entry
   if (json.resourceType === 'Bundle' && json.type === 'transaction') {
-    const bundle = fixBundleFullUrls(json as Bundle);
-    const warnings = validateAndFixIds(bundle, filePath);
+    const entries = (json.entry ?? []).map((entry: BundleEntry) => prepareEntryForMedplum(entry));
+    const bundle: Bundle = {
+      resourceType: 'Bundle',
+      type: 'transaction',
+      entry: entries,
+    };
     return {
       bundle,
-      resourceCount: bundle.entry?.length ?? 0,
-      warnings,
+      resourceCount: entries.length,
     };
   }
 
-  // Recurso individual con id — envolver en transaction Bundle con PUT (idempotente)
-  if (json.resourceType && json.id) {
-    let id = json.id;
-    const warnings: string[] = [];
-
-    if (!isValidFhirId(id)) {
-      const originalId = id;
-      id = sanitizeFhirId(id);
-      json.id = id;
-      warnings.push(`ID corregido: "${originalId}" → "${id}"`);
-    }
-
-    const bundle: Bundle = {
-      resourceType: 'Bundle',
-      type: 'transaction',
-      entry: [
-        {
-          fullUrl: `${FHIR_BASE}/${json.resourceType}/${id}`,
-          resource: json,
-          request: {
-            method: 'PUT',
-            url: `${json.resourceType}/${id}`,
-          },
-        } as BundleEntry,
-      ],
-    };
-    return { bundle, resourceCount: 1, warnings };
-  }
-
-  // Recurso individual sin id — usar POST
+  // Recurso individual — envolver en transaction Bundle
   if (json.resourceType) {
+    const entry = prepareEntryForMedplum({
+      resource: json,
+      request: {
+        method: 'PUT',
+        url: `${json.resourceType}/${json.id ?? ''}`,
+      },
+    });
+
     const bundle: Bundle = {
       resourceType: 'Bundle',
       type: 'transaction',
-      entry: [
-        {
-          resource: json,
-          request: {
-            method: 'POST',
-            url: json.resourceType,
-          },
-        } as BundleEntry,
-      ],
+      entry: [entry],
     };
-    return { bundle, resourceCount: 1, warnings: [] };
+    return { bundle, resourceCount: 1 };
   }
 
   throw new Error(`Archivo no reconocido como recurso FHIR: ${filePath}`);
@@ -224,7 +174,6 @@ function toTransactionBundle(filePath: string): { bundle: Bundle; resourceCount:
 function groupFilesByUploadOrder(): Map<string, string[]> {
   const grouped = new Map<string, string[]>();
 
-  // Inicializar grupos en orden
   for (const dir of UPLOAD_ORDER) {
     grouped.set(dir, []);
   }
@@ -248,15 +197,38 @@ function groupFilesByUploadOrder(): Map<string, string[]> {
   return grouped;
 }
 
-/**
- * Pausa asincrónica para retry con backoff.
- */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
- * Sube un bundle con reintentos y backoff exponencial.
+ * Determina si un error es retryable (solo errores de red/servidor).
+ */
+function isRetryableError(err: any): boolean {
+  // Errores con status 4xx no se reintentan
+  const status = err.status ?? err.statusCode;
+  if (status && status >= 400 && status < 500) {
+    return false;
+  }
+
+  // Errores con mensajes conocidos de validación no se reintentan
+  const message = err.message ?? String(err);
+  for (const pattern of NON_RETRYABLE_ERRORS) {
+    if (message.includes(pattern)) {
+      return false;
+    }
+  }
+
+  // Errores de OperationOutcome de Medplum no se reintentan
+  if (err.outcome?.issue) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Sube un bundle con reintentos solo para errores de red/servidor.
  */
 async function uploadWithRetry(
   medplum: MedplumClient,
@@ -270,13 +242,13 @@ async function uploadWithRetry(
       return await medplum.executeBatch(bundle);
     } catch (err: any) {
       lastError = err;
-      // Solo reintentar en errores de red/servidor, no en errores de validación
-      const status = err.status ?? err.statusCode;
-      if (status && status >= 400 && status < 500) {
-        throw err; // Error de cliente, no reintentar
+
+      if (!isRetryableError(err)) {
+        throw err;
       }
+
       if (attempt < maxRetries) {
-        const waitMs = Math.pow(2, attempt + 1) * 1000; // 2s, 4s, 8s
+        const waitMs = Math.pow(2, attempt + 1) * 1000;
         console.log(`    Reintentando en ${waitMs / 1000}s (intento ${attempt + 2}/${maxRetries + 1})...`);
         await sleep(waitMs);
       }
@@ -290,7 +262,6 @@ async function main(): Promise<void> {
   const isDryRun = process.argv.includes('--dry-run');
   const isVerbose = process.argv.includes('--verbose');
 
-  // Configuración desde variables de entorno
   const baseUrl = process.env.MEDPLUM_BASE_URL || 'https://api.epa-bienestar.com.ar';
   const clientId = process.env.MEDPLUM_CLIENT_ID;
   const clientSecret = process.env.MEDPLUM_CLIENT_SECRET;
@@ -306,7 +277,6 @@ async function main(): Promise<void> {
   console.log(`API:      ${baseUrl}`);
   console.log(`Modo:     ${isDryRun ? 'DRY RUN (sin subir)' : 'UPLOAD'}\n`);
 
-  // Inicializar cliente Medplum
   const medplum = new MedplumClient({ baseUrl });
 
   if (!isDryRun) {
@@ -328,27 +298,19 @@ async function main(): Promise<void> {
       const relativePath = path.relative(BUNDLES_DIR, file);
 
       try {
-        const { bundle, resourceCount, warnings } = toTransactionBundle(file);
+        const { bundle, resourceCount } = toTransactionBundle(file);
         totalResources += resourceCount;
 
-        // Mostrar warnings de IDs corregidos
-        for (const w of warnings) {
-          console.log(`  [WARN] ${relativePath}: ${w}`);
-        }
-
         if (isDryRun) {
-          // Validar estructura básica
+          // Validar que cada entry tiene request URL correcta
           const issues: string[] = [];
           for (const entry of bundle.entry ?? []) {
-            const resource = entry.resource as any;
-            if (resource?.id && !isValidFhirId(resource.id)) {
-              issues.push(`ID inválido: "${resource.id}"`);
+            if (!entry.request?.url) {
+              issues.push('Entry sin request.url');
             }
-            if (entry.fullUrl?.startsWith('urn:uuid:')) {
-              const uuid = entry.fullUrl.slice(9);
-              if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid)) {
-                issues.push(`fullUrl urn:uuid inválido: "${entry.fullUrl}"`);
-              }
+            const resource = entry.resource as any;
+            if (resource?.id) {
+              issues.push(`Recurso aún tiene id="${resource.id}" (debería haberse eliminado)`);
             }
           }
 
@@ -356,22 +318,21 @@ async function main(): Promise<void> {
             console.log(`  [ISSUE] ${relativePath}: ${issues.join('; ')}`);
             results.push({ file: relativePath, status: 'error', resourceCount, detail: issues.join('; ') });
           } else {
-            console.log(`  [OK] ${relativePath} (${resourceCount} recurso${resourceCount === 1 ? '' : 's'})`);
+            const urls = (bundle.entry ?? []).map((e) => e.request?.url).join(', ');
+            console.log(`  [OK] ${relativePath} (${resourceCount} recurso${resourceCount === 1 ? '' : 's'}) → ${urls}`);
             results.push({ file: relativePath, status: 'ok', resourceCount });
           }
           continue;
         }
 
-        // Subir el transaction bundle con reintentos
+        // Subir el transaction bundle
         const response = await uploadWithRetry(medplum, bundle);
 
         // Verificar respuestas individuales
-        const errors = (response.entry ?? []).filter(
-          (e: any) => {
-            const status = e.response?.status;
-            return status && !status.startsWith('2');
-          }
-        );
+        const errors = (response.entry ?? []).filter((e: any) => {
+          const status = e.response?.status;
+          return status && !status.startsWith('2');
+        });
 
         if (isVerbose) {
           for (const e of response.entry ?? []) {
