@@ -1,0 +1,70 @@
+{
+  "resourceType": "ActivityDefinition",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-HighComplexity"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-spect-cardiac",
+  "version": "1.0.0",
+  "name": "SPECTCardiaco",
+  "title": "SPECT / PCI cardíaco",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Perfusión miocárdica por SPECT (tomografía computarizada por emisión de fotón único) para evaluación de isquemia e infarto.",
+  "purpose": "Detectar y cuantificar isquemia miocárdica, evaluar viabilidad del miocardio y estratificar riesgo en enfermedad coronaria conocida o sospechada.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "373205008",
+        "display": "Nuclear medicine imaging of heart"
+      }
+    ],
+    "text": "SPECT / PCI cardíaco"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394579002",
+            "display": "Cardiology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "especializado"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "cardiology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "Suspender betabloqueantes y calcioantagonistas según indicación médica. Ayuno de 4 horas. No consumir cafeína 24 horas antes. El estudio dura entre 3-4 horas."
+    }
+  ]
+}
