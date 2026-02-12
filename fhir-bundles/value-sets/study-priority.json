@@ -1,0 +1,68 @@
+{
+  "resourceType": "ValueSet",
+  "id": "vs-study-priority",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ValueSet"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ValueSet/study-priority",
+  "version": "1.0.0",
+  "name": "EPAStudyPriority",
+  "title": "Prioridad de Estudios EPA Bienestar",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "ValueSet con los niveles de prioridad de estudios y consultas en el sistema de derivación EPA Bienestar. Define cuatro niveles que determinan cuándo se solicita cada estudio dentro del camino de derivación.",
+  "purpose": "Estandarizar la clasificación de prioridad de estudios para que el bot-specialty-router pueda generar ServiceRequests con el nivel adecuado.",
+  "compose": {
+    "include": [
+      {
+        "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/study-priority",
+        "concept": [
+          {
+            "code": "obligatorio",
+            "display": "Obligatorio",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Se solicita siempre que se activa la derivación a la especialidad correspondiente. No requiere condiciones adicionales."
+              }
+            ]
+          },
+          {
+            "code": "recomendado",
+            "display": "Recomendado",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Se recomienda solicitar pero puede omitirse según criterio médico. Aporta información complementaria valiosa."
+              }
+            ]
+          },
+          {
+            "code": "condicional",
+            "display": "Condicional",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Se solicita únicamente cuando se cumplen condiciones específicas de score LE8, hallazgos previos o factores demográficos."
+              }
+            ]
+          },
+          {
+            "code": "especializado",
+            "display": "Especializado",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Requiere autorización explícita del especialista tras evaluación de estudios previos. No se genera automáticamente."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

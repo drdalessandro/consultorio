@@ -1,0 +1,158 @@
+{
+  "resourceType": "ValueSet",
+  "id": "vs-specialty-codes",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ValueSet"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ValueSet/specialty-codes",
+  "version": "1.0.0",
+  "name": "EPASpecialtyCodes",
+  "title": "Códigos de Especialidades EPA Bienestar",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "ValueSet con los códigos SNOMED CT de las especialidades médicas utilizadas en el camino de derivación multi-especialidad EPA Bienestar, basado en Life's Essential 8.",
+  "purpose": "Estandarizar los códigos de especialidad para uso en PlanDefinitions, ActivityDefinitions y ServiceRequests del sistema EPA.",
+  "compose": {
+    "include": [
+      {
+        "system": "http://snomed.info/sct",
+        "concept": [
+          {
+            "code": "394579002",
+            "display": "Cardiology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Cardiología"
+              }
+            ]
+          },
+          {
+            "code": "394586005",
+            "display": "Gynecology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Ginecología"
+              }
+            ]
+          },
+          {
+            "code": "394583002",
+            "display": "Endocrinology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Endocrinología"
+              }
+            ]
+          },
+          {
+            "code": "394801008",
+            "display": "Trauma and orthopedics",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Traumatología y Ortopedia"
+              }
+            ]
+          },
+          {
+            "code": "418112009",
+            "display": "Pulmonary medicine",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Neumonología"
+              }
+            ]
+          },
+          {
+            "code": "394589003",
+            "display": "Nephrology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Nefrología"
+              }
+            ]
+          },
+          {
+            "code": "394591006",
+            "display": "Neurology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Neurología"
+              }
+            ]
+          },
+          {
+            "code": "722164000",
+            "display": "Dietetics and nutrition",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Nutrición"
+              }
+            ]
+          },
+          {
+            "code": "722162001",
+            "display": "Psychology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Psicología"
+              }
+            ]
+          },
+          {
+            "code": "394594003",
+            "display": "Ophthalmology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Oftalmología"
+              }
+            ]
+          },
+          {
+            "code": "394612005",
+            "display": "Urology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Urología"
+              }
+            ]
+          },
+          {
+            "code": "394582007",
+            "display": "Dermatology",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Dermatología"
+              }
+            ]
+          },
+          {
+            "code": "394608004",
+            "display": "Dentistry",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Odontología"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

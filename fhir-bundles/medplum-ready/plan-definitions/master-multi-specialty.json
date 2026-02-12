@@ -1,0 +1,196 @@
+{
+  "resourceType": "PlanDefinition",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-PlanDef-MasterProtocol"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-master-multi-specialty",
+  "version": "1.0.0",
+  "name": "EPAPlanDefMasterMultiSpecialty",
+  "title": "Protocolo Master — Derivación Multi-Especialidad EPA Bienestar",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "PlanDefinition orquestador principal del sistema EPA Bienestar. Evalúa el QuestionnaireResponse del LE8 y activa los caminos de derivación por especialidad según los umbrales definidos. Cada action referencia un PlanDefinition de especialidad via definitionCanonical. El bot-specialty-router utiliza este PlanDefinition como punto de entrada para generar el CarePlan personalizado del paciente.",
+  "purpose": "Servir como punto de entrada único para la derivación multi-especialidad, coordinando la activación de los 6 caminos de especialidad según el score LE8 del paciente.",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/plan-definition-type",
+        "code": "clinical-protocol",
+        "display": "Clinical Protocol"
+      }
+    ]
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "722091001",
+            "display": "Cardiovascular risk assessment"
+          }
+        ]
+      }
+    }
+  ],
+  "relatedArtifact": [
+    {
+      "type": "depends-on",
+      "resource": "https://epa-bienestar.com.ar/fhir/Questionnaire/le8-assessment",
+      "display": "Cuestionario LE8 — Life's Essential 8"
+    },
+    {
+      "type": "composed-of",
+      "resource": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-cardiology",
+      "display": "Camino de Derivación Cardiológica"
+    },
+    {
+      "type": "composed-of",
+      "resource": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-gynecology",
+      "display": "Camino de Derivación Ginecológica"
+    },
+    {
+      "type": "composed-of",
+      "resource": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-endocrinology",
+      "display": "Camino de Derivación Endocrinológica"
+    },
+    {
+      "type": "composed-of",
+      "resource": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-traumatology",
+      "display": "Camino de Derivación Traumatológica"
+    },
+    {
+      "type": "composed-of",
+      "resource": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-pulmonology",
+      "display": "Camino de Derivación Neumonológica"
+    },
+    {
+      "type": "composed-of",
+      "resource": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-other-specialties",
+      "display": "Camino de Derivación Otras Especialidades"
+    }
+  ],
+  "action": [
+    {
+      "id": "master-evaluate-le8",
+      "title": "Evaluación LE8 y Derivación Multi-Especialidad",
+      "description": "Evalúa el QuestionnaireResponse del Life's Essential 8 y activa los caminos de derivación correspondientes según los umbrales por especialidad. Múltiples especialidades pueden activarse simultáneamente.",
+      "groupingBehavior": "logical-group",
+      "selectionBehavior": "all",
+      "action": [
+        {
+          "id": "master-cardiology",
+          "title": "Derivación Cardiológica",
+          "description": "Activa el camino de cardiología cuando PA < 60, Colesterol < 50, o Score Global < 50.",
+          "condition": [
+            {
+              "kind": "applicability",
+              "expression": {
+                "description": "PA < 60 OR Colesterol < 50 OR Score Global < 50",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='blood-pressure').answer.valueInteger < 60 or %resource.item.where(linkId='blood-lipids').answer.valueInteger < 50 or (%resource.item.answer.valueInteger.aggregate($this + $total, 0) / 8) < 50"
+              }
+            }
+          ],
+          "definitionCanonical": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-cardiology"
+        },
+        {
+          "id": "master-gynecology",
+          "title": "Derivación Ginecológica",
+          "description": "Activa el camino de ginecología. Filtrado por sexo/edad lo resuelve el bot-specialty-router con datos del Patient. Condición en PlanDef: IMC/Peso < 50 como proxy.",
+          "condition": [
+            {
+              "kind": "applicability",
+              "expression": {
+                "description": "Programa Mujer activo OR (mujer AND > 40 años) OR (IMC/Peso < 50 AND mujer). Filtrado demográfico resuelto por bot.",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='weight-bmi').answer.valueInteger < 50"
+              }
+            }
+          ],
+          "definitionCanonical": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-gynecology"
+        },
+        {
+          "id": "master-endocrinology",
+          "title": "Derivación Endocrinológica",
+          "description": "Activa el camino de endocrinología cuando Glucemia < 50, IMC/Peso < 50, o ambos.",
+          "condition": [
+            {
+              "kind": "applicability",
+              "expression": {
+                "description": "Glucemia < 50 OR IMC/Peso < 50",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='blood-glucose').answer.valueInteger < 50 or %resource.item.where(linkId='weight-bmi').answer.valueInteger < 50"
+              }
+            }
+          ],
+          "definitionCanonical": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-endocrinology"
+        },
+        {
+          "id": "master-traumatology",
+          "title": "Derivación Traumatológica",
+          "description": "Activa el camino de traumatología cuando Actividad Física < 40 AND (IMC/Peso < 40 OR > 50 años). Filtrado por edad lo resuelve el bot.",
+          "condition": [
+            {
+              "kind": "applicability",
+              "expression": {
+                "description": "Actividad Física < 40 AND IMC/Peso < 40. Filtrado por edad (> 50 años) resuelto por bot.",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='physical-activity').answer.valueInteger < 40 and %resource.item.where(linkId='weight-bmi').answer.valueInteger < 40"
+              }
+            }
+          ],
+          "definitionCanonical": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-traumatology"
+        },
+        {
+          "id": "master-pulmonology",
+          "title": "Derivación Neumonológica",
+          "description": "Activa el camino de neumonología cuando Tabaquismo < 60, Sueño < 50, o Actividad Física < 40.",
+          "condition": [
+            {
+              "kind": "applicability",
+              "expression": {
+                "description": "Tabaquismo < 60 OR Sueño < 50 OR Actividad Física < 40",
+                "language": "text/fhirpath",
+                "expression": "%resource.item.where(linkId='nicotine').answer.valueInteger < 60 or %resource.item.where(linkId='sleep').answer.valueInteger < 50 or %resource.item.where(linkId='physical-activity').answer.valueInteger < 40"
+              }
+            }
+          ],
+          "definitionCanonical": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-pulmonology"
+        },
+        {
+          "id": "master-other-specialties",
+          "title": "Derivación Otras Especialidades",
+          "description": "Activa derivaciones a nefrología, neurología, nutrición, psicología, oftalmología, urología, dermatología y odontología cuando Score Global < 40 o hallazgos específicos.",
+          "condition": [
+            {
+              "kind": "applicability",
+              "expression": {
+                "description": "Score Global < 40 OR hallazgos específicos por especialidad",
+                "language": "text/fhirpath",
+                "expression": "(%resource.item.answer.valueInteger.aggregate($this + $total, 0) / 8) < 40"
+              }
+            }
+          ],
+          "definitionCanonical": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-other-specialties"
+        }
+      ]
+    }
+  ]
+}
