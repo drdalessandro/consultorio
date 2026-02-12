@@ -1,0 +1,70 @@
+{
+  "resourceType": "ActivityDefinition",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-HighComplexity"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-calorimetry",
+  "version": "1.0.0",
+  "name": "CalorimetriaIndirecta",
+  "title": "Calorimetría indirecta",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Medición del gasto energético en reposo mediante calorimetría indirecta para personalización del plan nutricional.",
+  "purpose": "Determinar tasa metabólica basal real del paciente para optimizar intervenciones nutricionales en sobrepeso, obesidad y trastornos metabólicos.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "252061009",
+        "display": "Measurement of resting energy expenditure"
+      }
+    ],
+    "text": "Calorimetría indirecta"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394583002",
+            "display": "Endocrinology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "recomendado"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "endocrinology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "Ayuno de 8-12 horas. Reposo de 30 minutos previo al estudio. No realizar ejercicio el día del estudio. No fumar 4 horas antes."
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "resourceType": "ActivityDefinition",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Consultation"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-endo-metabolic",
+  "version": "1.0.0",
+  "name": "EPAConsultEndoMetabolic",
+  "title": "Evaluación de síndrome metabólico",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Evaluación específica de síndrome metabólico. Condicional: IMC/Peso < 40 AND Glucemia < 50.",
+  "purpose": "Evaluación y manejo del síndrome metabólico en pacientes con scores LE8 alterados.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "185347001",
+        "display": "Encounter for problem"
+      }
+    ],
+    "text": "Evaluación de síndrome metabólico"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394583002",
+            "display": "Endocrinology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "condicional"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "endocrinology"
+    }
+  ]
+}

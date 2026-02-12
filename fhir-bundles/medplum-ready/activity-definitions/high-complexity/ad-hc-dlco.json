@@ -1,0 +1,70 @@
+{
+  "resourceType": "ActivityDefinition",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-HighComplexity"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-dlco",
+  "version": "1.0.0",
+  "name": "DifusionCODLCO",
+  "title": "Difusión de CO (DLCO)",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Medición de la capacidad de difusión pulmonar de monóxido de carbono para evaluar intercambio gaseoso alvéolo-capilar.",
+  "purpose": "Evaluar integridad de la membrana alvéolo-capilar, complementar diagnóstico de enfermedades intersticiales y enfisema pulmonar.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "252472004",
+        "display": "Lung diffusion capacity measurement"
+      }
+    ],
+    "text": "Difusión de CO (DLCO)"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "418112009",
+            "display": "Pulmonary medicine"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "condicional"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "pulmonology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "No fumar 24 horas antes. No consumir alcohol 24 horas antes. Misma preparación que espirometría."
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "resourceType": "ActivityDefinition",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-HighComplexity"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-hc-colposcopy",
+  "version": "1.0.0",
+  "name": "Colposcopia",
+  "title": "Colposcopía",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Examen colposcópico del cuello uterino con magnificación para evaluación de lesiones cervicales.",
+  "purpose": "Evaluar lesiones cervicales detectadas en citología o test de HPV positivo, guiar biopsias dirigidas y seguimiento de patología cervical.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "12350003",
+        "display": "Colposcopy"
+      }
+    ],
+    "text": "Colposcopía"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394586005",
+            "display": "Gynecology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "condicional"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "gynecology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "No usar óvulos ni cremas vaginales 48 horas antes. No mantener relaciones sexuales 48 horas antes. Evitar período menstrual."
+    }
+  ]
+}
