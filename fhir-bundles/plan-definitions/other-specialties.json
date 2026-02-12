@@ -3,7 +3,7 @@
   "type": "transaction",
   "entry": [
     {
-      "fullUrl": "urn:uuid:pd-other-specialties",
+      "fullUrl": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-other-specialties",
       "resource": {
         "resourceType": "PlanDefinition",
         "id": "pd-other-specialties",

@@ -3,7 +3,7 @@
   "type": "transaction",
   "entry": [
     {
-      "fullUrl": "urn:uuid:pd-gynecology",
+      "fullUrl": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-gynecology",
       "resource": {
         "resourceType": "PlanDefinition",
         "id": "pd-gynecology",
