@@ -1,0 +1,71 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-img-knee-xray",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Imaging"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-img-knee-xray",
+  "version": "1.0.0",
+  "name": "KneeXray",
+  "title": "Rx de rodillas bilateral",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Radiografía bilateral de rodillas frente, perfil y axial de rótula para evaluación de espacio articular, signos de gonartrosis y alineación rotuliana.",
+  "purpose": "Evaluación articular de rodillas en pacientes con sobrepeso, sedentarismo o sintomatología articular.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "168599001",
+        "display": "Plain radiography of knee"
+      }
+    ],
+    "text": "Rx de rodillas bilateral"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394801008",
+            "display": "Traumatology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "condicional"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "traumatology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "No requiere preparación especial."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-lab-rf-accp",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Laboratory"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-rf-accp",
+  "version": "1.0.0",
+  "name": "AdLabRfAccp",
+  "title": "Factor reumatoide + Anti-CCP",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Factor reumatoide y anticuerpos Anti-CCP. Condicional: sospecha de artritis reumatoidea.",
+  "purpose": "Screening serológico ante sospecha de artritis reumatoidea.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "11572-5",
+        "display": "Rheumatoid factor [Units/volume] in Serum or Plasma"
+      }
+    ],
+    "text": "Factor reumatoide + Anti-CCP"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394801008",
+            "display": "Traumatology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "condicional"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "traumatology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "No requiere ayuno."
+    }
+  ]
+}

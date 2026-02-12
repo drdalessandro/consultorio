@@ -1,0 +1,71 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-lab-vitamin-d",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Laboratory"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-vitamin-d",
+  "version": "1.0.0",
+  "name": "AdLabVitaminD",
+  "title": "Vitamina D (25-OH)",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "25-hidroxivitamina D. Obligatorio — evaluación de salud ósea en mujeres.",
+  "purpose": "Evaluación de salud ósea y niveles de vitamina D en mujeres.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "1989-3",
+        "display": "25-hydroxyvitamin D3 [Mass/volume] in Serum or Plasma"
+      }
+    ],
+    "text": "Vitamina D (25-OH)"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394586005",
+            "display": "Gynecology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "obligatorio"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "gynecology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "No requiere ayuno. Informar si toma suplementos de vitamina D."
+    }
+  ]
+}

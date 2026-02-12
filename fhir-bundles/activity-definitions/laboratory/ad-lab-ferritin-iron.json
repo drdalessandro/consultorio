@@ -1,0 +1,71 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-lab-ferritin-iron",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Laboratory"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-ferritin-iron",
+  "version": "1.0.0",
+  "name": "AdLabFerritinIron",
+  "title": "Ferremia + ferritina + transferrina",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Perfil de hierro: ferremia, ferritina y transferrina. Condicional: screening de anemia.",
+  "purpose": "Screening y evaluación de anemia ferropénica.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "2498-4",
+        "display": "Iron [Mass/volume] in Serum or Plasma"
+      }
+    ],
+    "text": "Ferremia + ferritina + transferrina"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394802001",
+            "display": "General medicine"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "condicional"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "other"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "Ayuno de 8-12 horas. Suspender suplementos de hierro 48 horas antes si es posible."
+    }
+  ]
+}

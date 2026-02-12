@@ -1,0 +1,71 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-lab-psa",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Laboratory"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-lab-psa",
+  "version": "1.0.0",
+  "name": "AdLabPsa",
+  "title": "PSA total",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Antígeno prostático específico total. Condicional: hombre > 50 años.",
+  "purpose": "Screening de cáncer de próstata en hombres mayores de 50 años.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "2857-1",
+        "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma"
+      }
+    ],
+    "text": "PSA total"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394612005",
+            "display": "Urology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "condicional"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "urology"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/prep-instructions",
+      "valueString": "No requiere ayuno. Evitar eyaculación 48 horas antes. No realizar post tacto rectal."
+    }
+  ]
+}
