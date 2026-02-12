@@ -1,0 +1,118 @@
+{
+  "resourceType": "ValueSet",
+  "id": "vs-le8-dimensions",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ValueSet"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ValueSet/le8-dimensions",
+  "version": "1.0.0",
+  "name": "EPALE8Dimensions",
+  "title": "Dimensiones Life's Essential 8 — EPA Bienestar",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "ValueSet con las 8 dimensiones de Life's Essential 8 (AHA) utilizadas en el cuestionario de evaluación cardiovascular EPA. Cada dimensión se puntúa de 0 (peor) a 100 (óptimo). Incluye el score global calculado como promedio de las 8 dimensiones.",
+  "purpose": "Estandarizar los códigos de las dimensiones LE8 para uso en Questionnaire, QuestionnaireResponse, Observations y en las condiciones de activación de PlanDefinitions.",
+  "compose": {
+    "include": [
+      {
+        "system": "https://epa-bienestar.com.ar/fhir/CodeSystem/le8-dimensions",
+        "concept": [
+          {
+            "code": "diet",
+            "display": "Alimentación",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Evaluación de la calidad de la dieta según patrones alimentarios saludables (DASH, Mediterránea). Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "physical-activity",
+            "display": "Actividad Física",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Nivel de actividad física semanal. 100 = ≥150 min/sem moderada o ≥75 min/sem vigorosa. Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "nicotine",
+            "display": "Tabaquismo",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Exposición a nicotina/tabaco. 100 = nunca fumó, 0 = fumador activo pesado. Incluye cigarrillo electrónico. Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "sleep",
+            "display": "Sueño",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Calidad y duración del sueño. 100 = 7-9 horas con buena calidad. Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "weight-bmi",
+            "display": "Peso / IMC",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Índice de masa corporal. 100 = IMC 18.5-24.9. Score disminuye con sobrepeso/obesidad. Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "blood-lipids",
+            "display": "Colesterol",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Perfil lipídico. 100 = colesterol total <200, LDL <100, HDL ≥60. Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "blood-glucose",
+            "display": "Glucemia",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Control glucémico. 100 = glucemia en ayunas <100, HbA1c <5.7%. Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "blood-pressure",
+            "display": "Presión Arterial",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Control de presión arterial. 100 = <120/80 mmHg sin medicación. Score 0-100."
+              }
+            ]
+          },
+          {
+            "code": "le8-global",
+            "display": "Score Global LE8",
+            "designation": [
+              {
+                "language": "es",
+                "value": "Promedio de las 8 dimensiones. Rango 0-100. <50 = riesgo cardiovascular significativo."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
