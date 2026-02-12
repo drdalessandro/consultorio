@@ -3,7 +3,7 @@
   "type": "transaction",
   "entry": [
     {
-      "fullUrl": "urn:uuid:pd-pulmonology",
+      "fullUrl": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-pulmonology",
       "resource": {
         "resourceType": "PlanDefinition",
         "id": "pd-pulmonology",

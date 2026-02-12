@@ -3,7 +3,7 @@
   "type": "transaction",
   "entry": [
     {
-      "fullUrl": "urn:uuid:pd-traumatology",
+      "fullUrl": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-traumatology",
       "resource": {
         "resourceType": "PlanDefinition",
         "id": "pd-traumatology",

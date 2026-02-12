@@ -3,7 +3,7 @@
   "type": "transaction",
   "entry": [
     {
-      "fullUrl": "urn:uuid:q-le8-assessment",
+      "fullUrl": "https://epa-bienestar.com.ar/fhir/Questionnaire/q-le8-assessment",
       "resource": {
         "resourceType": "Questionnaire",
         "id": "q-le8-assessment",

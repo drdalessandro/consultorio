@@ -3,7 +3,7 @@
   "type": "transaction",
   "entry": [
     {
-      "fullUrl": "urn:uuid:pd-cardiology",
+      "fullUrl": "https://epa-bienestar.com.ar/fhir/PlanDefinition/pd-cardiology",
       "resource": {
         "resourceType": "PlanDefinition",
         "id": "pd-cardiology",
