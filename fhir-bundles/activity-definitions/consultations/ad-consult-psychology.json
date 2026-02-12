@@ -1,0 +1,67 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-consult-psychology",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Consultation"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-psychology",
+  "version": "1.0.0",
+  "name": "EPAConsultPsychology",
+  "title": "Consulta psicológica / salud mental",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Evaluación psicológica para abordaje de factores conductuales y adherencia al tratamiento.",
+  "purpose": "Abordaje psicológico de factores conductuales que impactan la salud cardiovascular.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "185347001",
+        "display": "Encounter for problem"
+      }
+    ],
+    "text": "Consulta psicológica / salud mental"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "722162001",
+            "display": "Psychology"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "recomendado"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "psychology"
+    }
+  ]
+}

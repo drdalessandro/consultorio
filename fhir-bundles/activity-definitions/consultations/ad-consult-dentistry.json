@@ -1,0 +1,67 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "ad-consult-dentistry",
+  "meta": {
+    "profile": [
+      "https://epa-bienestar.com.ar/fhir/StructureDefinition/EPA-ActivityDef-Consultation"
+    ]
+  },
+  "url": "https://epa-bienestar.com.ar/fhir/ActivityDefinition/ad-consult-dentistry",
+  "version": "1.0.0",
+  "name": "EPAConsultDentistry",
+  "title": "Consulta odontológica",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-01-01",
+  "publisher": "EPA Bienestar",
+  "description": "Evaluación odontológica preventiva. La salud periodontal se asocia con riesgo cardiovascular.",
+  "purpose": "Evaluación odontológica preventiva dado el vínculo entre salud periodontal y riesgo cardiovascular.",
+  "kind": "ServiceRequest",
+  "intent": "order",
+  "priority": "routine",
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "185349003",
+        "display": "Encounter for check-up"
+      }
+    ],
+    "text": "Consulta odontológica"
+  },
+  "subjectCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/resource-types",
+        "code": "Patient"
+      }
+    ]
+  },
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394608004",
+            "display": "Dentistry"
+          }
+        ]
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/study-priority",
+      "valueCode": "recomendado"
+    },
+    {
+      "url": "https://epa-bienestar.com.ar/fhir/StructureDefinition/specialty-reference",
+      "valueCode": "dentistry"
+    }
+  ]
+}
