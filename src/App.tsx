@@ -5,9 +5,12 @@ import {
   IconCalendarEvent,
   IconClipboardHeart,
   IconClipboardList,
+  IconDeviceHeartMonitor,
+  IconHeart,
   IconHomeHeart,
   IconReportMedical,
   IconStethoscope,
+  IconTarget,
   IconUser,
 } from '@tabler/icons-react';
 import { Suspense } from 'react';
@@ -21,6 +24,7 @@ import { ResourcePage } from './pages/ResourcePage';
 import { SearchPage } from './pages/SearchPage';
 import { SignInPage } from './pages/SignInPage';
 import { EpaLogo } from './components/EpaLogo';
+import { PLAN_100_CANONICAL } from './plan100Dias';
 
 export function App(): JSX.Element | null {
   const medplum = useMedplum();
@@ -61,7 +65,22 @@ export function App(): JSX.Element | null {
         },
         {
           title: 'Agenda',
-          links: [{ icon: <IconCalendarEvent />, label: 'Próximos turnos', href: '/Appointment' }],
+          links: [{ icon: <IconCalendarEvent />, label: 'Próximos turnos', href: '/Appointment?status=booked' }],
+        },
+        {
+          title: 'Plan Bienestar 100 Días',
+          links: [
+            {
+              icon: <IconHeart />,
+              label: 'Pacientes inscriptas',
+              href: `/CarePlan?instantiates-canonical=${encodeURIComponent(PLAN_100_CANONICAL)}&status=active`,
+            },
+            { icon: <IconTarget />, label: 'Goals activos', href: '/Goal?lifecycle-status=active' },
+          ],
+        },
+        {
+          title: 'Devices',
+          links: [{ icon: <IconDeviceHeartMonitor />, label: 'Inventario', href: '/Device' }],
         },
       ]}
     >

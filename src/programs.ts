@@ -56,15 +56,26 @@ export const PROGRAMS: ProgramDefinition[] = [
     color: 'green',
   },
   {
-    code: 'seguimiento',
-    display: 'Consultorio Seguimiento',
-    shortLabel: 'Seguimiento',
-    url: 'https://seguimiento.epa-bienestar.com.ar',
+    code: 'consultorio',
+    display: 'Consultorio',
+    shortLabel: 'Consultorio',
+    url: 'https://consultorio.epa-bienestar.com.ar',
     color: 'epa',
   },
 ];
 
 const PROGRAM_BY_CODE = new Map(PROGRAMS.map((p) => [p.code, p]));
+
+/**
+ * Programas que el dashboard renderiza como tarjeta principal en el
+ * "Resumen del consultorio". El resto se mantiene en `PROGRAMS` para que
+ * los chips de filtro y `getProgram(code)` sigan funcionando, pero queda
+ * fuera de las vistas resumidas hasta que ese Project se sume al scope.
+ */
+export const ACTIVE_PROGRAM_CODES = ['mujer', 'habitos'] as const;
+export const ACTIVE_PROGRAMS: ProgramDefinition[] = ACTIVE_PROGRAM_CODES.map(
+  (code) => PROGRAM_BY_CODE.get(code) as ProgramDefinition
+);
 
 export function getProgram(code: string | undefined): ProgramDefinition | undefined {
   if (!code) return undefined;

@@ -1,19 +1,30 @@
-<h1 align="center">Seguimiento — EPA Bienestar</h1>
-<p align="center">Plataforma clínica unificada con historia longitudinal, órdenes de estudios y soporte de IA, integrada al backend Medplum self-hosted en <a href="https://api.epa-bienestar.com.ar">api.epa-bienestar.com.ar</a>.</p>
+<h1 align="center">Consultorio · EPA Bienestar IA</h1>
+<p align="center">Salud cardiovascular de la mujer en cada etapa de la vida — guiada por el estándar FHIR R4/R5/R6.</p>
 
-URL pública: **https://seguimiento.epa-bienestar.com.ar**
+URL pública: **https://consultorio.epa-bienestar.com.ar**
+
+> El repo histórico se llama `seguimiento` (legado). El producto se llama **Consultorio**.
 
 ---
 
 ## Qué hace
 
-- **Historia longitudinal unificada** de los 6 programas EPA (Mujer, Cardio, RHCV, SAC, AFACIMERA, Hábitos), agregando lo que cada programa escribe en el backend FHIR central.
-- **Pedidos de estudios complementarios**: catálogo curado de paneles con códigos LOINC (laboratorio + imágenes), generación de PDF imprimible, carga y vinculación de resultados como `DiagnosticReport`.
-- **Asistencia por IA** vía Bots de Medplum + Claude API:
-  - sugerencia de paneles de estudios según el cuadro clínico
-  - interpretación automática de resultados con detección de hallazgos críticos
-- **De-identificación previa** de todos los datos enviados a Claude (HMAC sobre identificadores, fechas relativas, sin nombre/DNI/dirección) — Ley 25.326.
-- **Multi-tenant lógico**: un único Project Medplum, recursos taggeados por programa con `meta.tag` (`https://epa-bienestar.com.ar/programa|<código>`).
+Consultorio es una herramienta clínica que **optimiza el flujo de trabajo del profesional médico** en todo el ciclo de la consulta, integrada al backend Medplum self-hosted en `api.epa-bienestar.com.ar`. La filosofía es **FHIR-first**: cada feature respeta el recurso canónico (Patient, Encounter, ServiceRequest, CarePlan, Goal, Device, etc.) y reduce las fricciones que el profesional encuentra en la práctica.
+
+Foco inicial: **Programa Mujer** (FemTech cardiovascular). Project ID `79679343-1b6e-47b9-bee7-32929111451d`. Programa Hábitos se suma a continuación.
+
+### Funcionalidades
+
+- **Resumen del consultorio** scoped al Project activo
+  - KPIs: pacientes, pedidos pendientes, resultados (7d), próximos turnos, sugerencias IA pendientes
+  - Tarjetas por programa (Mujer + Hábitos)
+  - **Plan Bienestar 100 Días**: pacientes inscriptas, goals activos / alcanzados, activities pendientes
+  - **Etapas de la vida**: distribución de pacientes femeninas por edad (adolescencia → postmenopausia)
+  - **Devices monitoreados**: tensiómetros, balanzas, glucómetros, trackers de actividad, con alertas de inactividad
+- **Pedidos de estudios complementarios** con catálogo curado LOINC (lab + imágenes), PDF imprimible y carga de resultados
+- **Bots IA** (Claude vía Anthropic API) con de-identificación previa: sugerencia de paneles e interpretación de resultados
+- **Multi-tenant lógico** por `meta.tag` y `_project`
+- **Localización completa** en español (Argentina)
 
 ## Stack
 
@@ -27,30 +38,35 @@ URL pública: **https://seguimiento.epa-bienestar.com.ar**
 ```
 src/
   App.tsx                         layout principal y rutas
-  programs.ts                     definición de los 6 programas + helper de tags
+  config.ts                       lectura de env vars (baseUrl, projectId, clientId, googleClientId)
+  programs.ts                     definición de los 6 programas + ACTIVE_PROGRAMS (Mujer/Hábitos)
+  projectScope.ts                 helpers para filtrar queries por _project
+  lifeStages.ts                   etapas de la vida femenina (cálculo por edad)
+  clinicalDevices.ts              perfiles de Tensiómetro, Balanza, Glucómetro, Tracker actividad
+  plan100Dias.ts                  canonical URL de PlanDefinition + ActivityDefinitions
   bots/core/
     clinical-ai-suggest.ts        Bot: sugerencia de estudios via Claude
     clinical-ai-interpret.ts      Bot: interpretación de DiagnosticReport
     deidentify.ts                 utilitarios HMAC para anonimizar antes de enviar a Claude
   components/
-    EpaLogo.tsx                   logo SVG inline (sin assets externos)
+    EpaLogo.tsx
     orders/                       OrdersPanel, PatientOrders, catálogo, PDF
     programs/                     badges + resumen de programas del paciente
     actions/AiSuggestionsPanel    UI para aceptar/descartar sugerencias IA
   pages/
-    DashboardPage.tsx             home con KPIs y vistas por programa
+    DashboardPage.tsx             Resumen del consultorio (Mujer + Hábitos + Plan 100d + etapas + devices)
     EncounterPage / PatientPage   chart clínico
 data/
   core/
     order-panels.json             catálogo curado de paneles (LOINC)
-    access-policies.json          AccessPolicy ejemplo (multi-programa, cardio, mujer)
-    ai-bots.json                  bundle de Bots y Subscriptions IA
+    access-policies.json          AccessPolicy ejemplo
+    ai-bots.json                  bundle Bots + Subscriptions IA
+    plan-bienestar-100-dias.json  PlanDefinition + ActivityDefinitions + Goals (cargar al Project Mujer)
 deploy/
-  nginx/                          vhost para seguimiento.epa-bienestar.com.ar
-  install.sh, update.sh           scripts de deploy a la VPS
+  nginx/                          vhost consultorio.epa-bienestar.com.ar
+  install.sh, update.sh           scripts de deploy a /opt/consultorio
 docs/
-  programs.md                     contrato de tags entre programas
-  ai-bots.md                      operación de los Bots IA
+  programs.md, ai-bots.md
 ```
 
 ## Configuración
@@ -59,16 +75,29 @@ docs/
 
 ```
 MEDPLUM_BASE_URL=https://api.epa-bienestar.com.ar/
-MEDPLUM_CLIENT_ID=babb532b-3c00-404f-9564-6c3ab6f27511   # Seguimiento
+MEDPLUM_PROJECT_ID=79679343-1b6e-47b9-bee7-32929111451d   # Project Mujer
+MEDPLUM_PROJECT_LABEL=Programa Mujer
+MEDPLUM_CLIENT_ID=188d147c-a397-482e-898e-928fbd445321    # Mujer Default Client
 GOOGLE_CLIENT_ID=472653584585-r9q1rl7junfi6nb2s78ajccv5n2aj6ie.apps.googleusercontent.com
 ```
 
-Project Secrets en `app.epa-bienestar.com.ar` (para los Bots):
+Cuando crees el "Consultorio Client" con AccessPolicy multi-Project, reemplazá `MEDPLUM_CLIENT_ID` y rebuildeá.
+
+Project Secrets (en `app.epa-bienestar.com.ar` → Project Mujer → Secrets):
 
 | Secret | Para |
 |---|---|
 | `ANTHROPIC_API_KEY` | Llamadas a Claude API |
 | `DEIDENTIFY_HMAC_KEY` | Pseudonimización (`openssl rand -hex 32`) |
+
+## Sembrar el Plan Bienestar 100 Días
+
+```bash
+# desde la UI de Medplum admin (app.epa-bienestar.com.ar) → Project Mujer → Batch upload
+# subí el archivo data/core/plan-bienestar-100-dias.json
+```
+
+Eso crea el `PlanDefinition` (canonical `https://epa-bienestar.com.ar/PlanDefinition/plan-bienestar-100-dias`) + 8 `ActivityDefinitions` + Goal templates alineados a Life's Essential 8.
 
 ## Desarrollo local
 
@@ -88,11 +117,11 @@ git commit -m "build: nuevo dist"
 git push origin claude/integrate-medplum-backend-zKqdJ
 
 # en la VPS
-cd /opt/seguimiento
+cd /opt/consultorio
 bash deploy/update.sh
 ```
 
-Detalles completos en [`deploy/README.md`](./deploy/README.md).
+Detalles en [`deploy/README.md`](./deploy/README.md).
 
 ## Tests
 

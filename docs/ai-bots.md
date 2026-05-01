@@ -65,7 +65,7 @@ El script `src/scripts/deploy-bots.ts` (provisto por el demo Medplum) lo automat
 
 1. Crear un Encounter de prueba con `status=in-progress`, sumar una `ClinicalImpression` y guardar.
 2. Esperar 5–10 segundos. Debería aparecer un `Task` con code `ai-order-suggestion`.
-3. Abrir el Encounter en seguimiento → columna derecha "Sugerencias IA" muestra cada panel sugerido con botón **✓ aceptar** y **✗ descartar**.
+3. Abrir el Encounter en Consultorio → columna derecha "Sugerencias IA" muestra cada panel sugerido con botón **✓ aceptar** y **✗ descartar**.
 4. Aceptar uno → se crean los `ServiceRequest` reales con todos los códigos LOINC del panel.
 
 ## Auditoría / cumplimiento

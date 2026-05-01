@@ -1,6 +1,8 @@
 # Tags por programa — contrato compartido
 
-EPA Bienestar agrupa 6 programas satélite que escriben directo en el backend FHIR central (`api.epa-bienestar.com.ar`). Para que `seguimiento.epa-bienestar.com.ar` pueda mostrar la historia unificada y filtrar por programa, **cada recurso creado por un programa debe llevar un `meta.tag` estandarizado**.
+EPA Bienestar agrupa 6 programas satélite que escriben directo en el backend FHIR central (`api.epa-bienestar.com.ar`). Para que **Consultorio** (`consultorio.epa-bienestar.com.ar`) pueda mostrar la historia unificada y filtrar por programa, **cada recurso creado por un programa debe llevar un `meta.tag` estandarizado**.
+
+> Foco actual: **Programa Mujer** (Project ID `79679343-1b6e-47b9-bee7-32929111451d`). Programa Hábitos se sumará más adelante. El resto se mantiene como referencia para cuando crucemos a multi-Project.
 
 ## System
 
@@ -18,7 +20,7 @@ https://epa-bienestar.com.ar/programa
 | `sac` | Residencias SAC | https://sac.epa-bienestar.com.ar |
 | `afacimera` | Estudiantes / AFACIMERA | https://afacimera.epa-bienestar.com.ar |
 | `habitos` | Programa Hábitos | https://habitos.epa-bienestar.com.ar |
-| `seguimiento` | Consultorio Seguimiento (este front) | https://seguimiento.epa-bienestar.com.ar |
+| `consultorio` | Consultorio (este front) | https://consultorio.epa-bienestar.com.ar |
 
 ## Cómo lo aplican los programas
 
@@ -27,8 +29,8 @@ Cada programa, antes de hacer `medplum.createResource(...)` o `medplum.upsertRes
 ```ts
 const programa: Coding = {
   system: 'https://epa-bienestar.com.ar/programa',
-  code: 'cardio',
-  display: 'Programa Cardio',
+  code: 'mujer',
+  display: 'Programa Mujer',
 };
 
 await medplum.createResource({
@@ -37,7 +39,7 @@ await medplum.createResource({
 });
 ```
 
-Aplica a todos los recursos clínicos creados por el programa: `Patient`, `Observation`, `Condition`, `QuestionnaireResponse`, `Encounter`, `ServiceRequest`, `DiagnosticReport`, `Communication`, `Task`, etc.
+Aplica a todos los recursos clínicos creados por el programa: `Patient`, `Observation`, `Condition`, `QuestionnaireResponse`, `Encounter`, `ServiceRequest`, `DiagnosticReport`, `Communication`, `Task`, `CarePlan`, `Goal`, `Device`, etc.
 
 Un mismo recurso **puede tener varios tags** (ej. una paciente del Programa Mujer también vista en RHCV).
 
@@ -46,11 +48,11 @@ Un mismo recurso **puede tener varios tags** (ej. una paciente del Programa Muje
 Medplum indexa `meta.tag` automáticamente:
 
 ```
-GET /Patient?_tag=https://epa-bienestar.com.ar/programa|cardio
-GET /Observation?patient=Patient/123&_tag=https://epa-bienestar.com.ar/programa|mujer
+GET /Patient?_tag=https://epa-bienestar.com.ar/programa|mujer
+GET /Observation?patient=Patient/123&_tag=https://epa-bienestar.com.ar/programa|habitos
 ```
 
-Cualquier recurso sin tag se considera "creado en seguimiento" (default).
+Cualquier recurso sin tag se considera "creado en Consultorio" (default).
 
 ## AccessPolicy
 
@@ -58,4 +60,4 @@ Las plantillas de `AccessPolicy` en `data/core/access-policies.json` filtran por
 
 ## Migración de datos existentes
 
-Si los programas ya están escribiendo sin tag, se puede backfillear con un Bot único de migración o vía SQL en el Postgres del backend. La política de seguimiento es: **los datos sin tag siguen visibles para roles admin**, pero no aparecen en las vistas filtradas por programa.
+Si los programas ya están escribiendo sin tag, se puede backfillear con un Bot único de migración o vía SQL en el Postgres del backend. La política es: **los datos sin tag siguen visibles para roles admin**, pero no aparecen en las vistas filtradas por programa.

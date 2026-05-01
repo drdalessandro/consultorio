@@ -78,7 +78,7 @@ export function buildOrderPrintHtml(input: BuildPdfInput): string {
   </div>
 
   <div class="footer">
-    Generado por seguimiento.epa-bienestar.com.ar — los códigos LOINC corresponden al estándar internacional.
+    Generado por consultorio.epa-bienestar.com.ar — los códigos LOINC corresponden al estándar internacional.
   </div>
 </body>
 </html>`;

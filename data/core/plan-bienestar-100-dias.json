@@ -1,0 +1,243 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "_comment": "PlanDefinition + ActivityDefinition + Goal templates del Plan Bienestar 100 Días. Cargar al Project Mujer (79679343-1b6e-47b9-bee7-32929111451d). Los goals están alineados a Life's Essential 8 (AHA) con foco cardiovascular femenino.",
+  "entry": [
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/PlanDefinition/plan-bienestar-100-dias",
+      "request": {
+        "method": "PUT",
+        "url": "PlanDefinition?url=https://epa-bienestar.com.ar/PlanDefinition/plan-bienestar-100-dias"
+      },
+      "resource": {
+        "resourceType": "PlanDefinition",
+        "url": "https://epa-bienestar.com.ar/PlanDefinition/plan-bienestar-100-dias",
+        "version": "1.0.0",
+        "name": "PlanBienestar100Dias",
+        "title": "Plan Bienestar 100 Días",
+        "status": "active",
+        "experimental": false,
+        "date": "2026-05-01",
+        "publisher": "EPA Bienestar IA",
+        "description": "Programa de transformación de hábitos cardiovasculares en 100 días, alineado a Life's Essential 8 de la AHA, adaptado a las distintas etapas de la vida de la mujer.",
+        "purpose": "Reducir riesgo cardiovascular en mujeres mediante intervenciones estructuradas en alimentación, actividad física, sueño, manejo del estrés, control de tabaco, y monitoreo de TA, peso y glucemia.",
+        "usage": "Vincular cada paciente inscripta mediante un CarePlan con instantiatesCanonical=https://epa-bienestar.com.ar/PlanDefinition/plan-bienestar-100-dias",
+        "topic": [
+          {
+            "coding": [
+              { "system": "http://terminology.hl7.org/CodeSystem/definition-topic", "code": "treatment", "display": "Treatment" }
+            ]
+          }
+        ],
+        "useContext": [
+          {
+            "code": { "system": "http://terminology.hl7.org/CodeSystem/usage-context-type", "code": "gender" },
+            "valueCodeableConcept": {
+              "coding": [{ "system": "http://hl7.org/fhir/administrative-gender", "code": "female", "display": "Femenino" }]
+            }
+          }
+        ],
+        "goal": [
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "dietary" }] },
+            "description": { "text": "Patrón alimentario tipo DASH/Mediterráneo con foco cardiovascular." },
+            "priority": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-priority", "code": "high-priority" }] },
+            "addresses": [
+              { "coding": [{ "system": "http://snomed.info/sct", "code": "439491004", "display": "Riesgo cardiovascular" }] }
+            ],
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "76690-7", "display": "MEDFICTS dietary score" }] },
+                "detailRange": { "low": { "value": 0, "unit": "score" }, "high": { "value": 39, "unit": "score" } }
+              }
+            ]
+          },
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "physiotherapy" }] },
+            "description": { "text": "≥150 min/semana de actividad física moderada o ≥75 min/semana intensa." },
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "82290-8", "display": "Days per week of moderate to vigorous physical activity" }] },
+                "detailQuantity": { "value": 5, "unit": "días/semana" }
+              }
+            ]
+          },
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "behavioral" }] },
+            "description": { "text": "Cesación tabáquica completa." },
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "72166-2", "display": "Tobacco smoking status" }] },
+                "detailCodeableConcept": { "coding": [{ "system": "http://snomed.info/sct", "code": "8517006", "display": "Ex-smoker" }] }
+              }
+            ]
+          },
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "behavioral" }] },
+            "description": { "text": "7-9 horas de sueño reparador por noche." },
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "93832-4", "display": "Sleep duration" }] },
+                "detailRange": { "low": { "value": 7, "unit": "h" }, "high": { "value": 9, "unit": "h" } }
+              }
+            ]
+          },
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "physiotherapy" }] },
+            "description": { "text": "IMC en rango saludable (18.5-24.9)." },
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "39156-5", "display": "Body mass index" }] },
+                "detailRange": { "low": { "value": 18.5, "unit": "kg/m2" }, "high": { "value": 24.9, "unit": "kg/m2" } }
+              }
+            ]
+          },
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "physiotherapy" }] },
+            "description": { "text": "Colesterol no-HDL < 130 mg/dL." },
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "43396-1", "display": "Cholesterol non HDL [Mass/volume] in Serum or Plasma" }] },
+                "detailRange": { "high": { "value": 130, "unit": "mg/dL" } }
+              }
+            ]
+          },
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "physiotherapy" }] },
+            "description": { "text": "Glucemia en ayunas < 100 mg/dL (HbA1c < 5.7%)." },
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total" }] },
+                "detailRange": { "high": { "value": 5.7, "unit": "%" } }
+              }
+            ]
+          },
+          {
+            "category": { "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/goal-category", "code": "physiotherapy" }] },
+            "description": { "text": "Tensión arterial < 120/80 mmHg." },
+            "target": [
+              {
+                "measure": { "coding": [{ "system": "http://loinc.org", "code": "85354-9", "display": "Blood pressure panel" }] },
+                "detailRange": { "high": { "value": 120, "unit": "mm[Hg]" } }
+              }
+            ]
+          }
+        ],
+        "action": [
+          { "title": "Educación nutricional inicial", "description": "Sesión 1 con nutricionista — patrón DASH/Mediterráneo.", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/educacion-nutricional", "timingDuration": { "value": 1, "unit": "h" } },
+          { "title": "Plan de actividad física semanal", "description": "Pauta progresiva de 150 min/semana.", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/actividad-fisica-semanal" },
+          { "title": "Control de TA semanal", "description": "Auto-medición TA en domicilio con tensiómetro vinculado.", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/control-ta-semanal", "timingTiming": { "repeat": { "frequency": 1, "period": 1, "periodUnit": "wk" } } },
+          { "title": "Control de peso semanal", "description": "Auto-medición de peso e IMC.", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/control-peso-semanal", "timingTiming": { "repeat": { "frequency": 1, "period": 1, "periodUnit": "wk" } } },
+          { "title": "Higiene del sueño", "description": "Pauta de descanso nocturno reparador (7-9h).", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/higiene-sueno" },
+          { "title": "Manejo del estrés y salud emocional", "description": "Mindfulness/meditación 10 min/día.", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/salud-emocional" },
+          { "title": "Cesación tabáquica (si aplica)", "description": "Plan de cesación con seguimiento.", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/cesacion-tabaquica" },
+          { "title": "Lab control 30 / 60 / 100 días", "description": "Lipidograma, glucemia, HbA1c, función renal.", "definitionCanonical": "https://epa-bienestar.com.ar/ActivityDefinition/lab-control-100d", "timingTiming": { "repeat": { "frequency": 3, "period": 100, "periodUnit": "d" } } }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/educacion-nutricional",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/educacion-nutricional" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/educacion-nutricional",
+        "name": "EducacionNutricional",
+        "title": "Educación nutricional · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "11816003", "display": "Diet education" }] }
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/actividad-fisica-semanal",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/actividad-fisica-semanal" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/actividad-fisica-semanal",
+        "name": "ActividadFisicaSemanal",
+        "title": "Plan de actividad física semanal · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "229065009", "display": "Exercise therapy" }] }
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/control-ta-semanal",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/control-ta-semanal" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/control-ta-semanal",
+        "name": "ControlTASemanal",
+        "title": "Control de TA semanal (domicilio) · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://loinc.org", "code": "85354-9", "display": "Blood pressure panel" }] }
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/control-peso-semanal",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/control-peso-semanal" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/control-peso-semanal",
+        "name": "ControlPesoSemanal",
+        "title": "Control de peso semanal (domicilio) · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://loinc.org", "code": "29463-7", "display": "Body weight" }] }
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/higiene-sueno",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/higiene-sueno" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/higiene-sueno",
+        "name": "HigieneSueno",
+        "title": "Higiene del sueño · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "182968006", "display": "Sleep hygiene education" }] }
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/salud-emocional",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/salud-emocional" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/salud-emocional",
+        "name": "SaludEmocional",
+        "title": "Manejo del estrés y salud emocional · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "401277000", "display": "Stress management education" }] }
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/cesacion-tabaquica",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/cesacion-tabaquica" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/cesacion-tabaquica",
+        "name": "CesacionTabaquica",
+        "title": "Cesación tabáquica · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "710081004", "display": "Smoking cessation therapy" }] }
+      }
+    },
+    {
+      "fullUrl": "https://epa-bienestar.com.ar/ActivityDefinition/lab-control-100d",
+      "request": { "method": "PUT", "url": "ActivityDefinition?url=https://epa-bienestar.com.ar/ActivityDefinition/lab-control-100d" },
+      "resource": {
+        "resourceType": "ActivityDefinition",
+        "url": "https://epa-bienestar.com.ar/ActivityDefinition/lab-control-100d",
+        "name": "LabControl100d",
+        "title": "Laboratorio control 30/60/100 días · Plan 100 Días",
+        "status": "active",
+        "kind": "ServiceRequest",
+        "code": { "coding": [{ "system": "http://loinc.org", "code": "24331-1", "display": "Lipid 1996 panel - Serum or Plasma" }] }
+      }
+    }
+  ]
+}

@@ -123,7 +123,7 @@ export function PatientPrograms({ patient }: PatientProgramsProps): JSX.Element 
       <Card withBorder>
         <Title order={4}>Acceso rápido</Title>
         <Group gap="xs" mt="sm">
-          {PROGRAMS.filter((p) => p.code !== 'seguimiento').map((p) => (
+          {PROGRAMS.filter((p) => p.code !== 'consultorio').map((p) => (
             <Anchor key={p.code} href={p.url} target="_blank" rel="noreferrer" size="sm">
               <Badge color={p.color} variant="outline">
                 {p.shortLabel}
