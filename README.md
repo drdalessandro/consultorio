@@ -117,7 +117,7 @@ git commit -m "build: nuevo dist"
 git push origin claude/integrate-medplum-backend-zKqdJ
 
 # en la VPS
-cd /opt/consultorio
+cd /home/consultorio
 bash deploy/update.sh
 ```
 
