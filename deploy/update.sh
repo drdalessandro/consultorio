@@ -11,7 +11,7 @@
 #   cd /opt/consultorio && bash deploy/update.sh
 set -euo pipefail
 
-REPO_DIR="/opt/consultorio"
+REPO_DIR="/home/consultorio"
 
 if [[ "$(realpath "$(pwd)")" != "${REPO_DIR}" ]]; then
   cd "${REPO_DIR}"
