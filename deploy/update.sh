@@ -8,10 +8,10 @@
 #   - recarga nginx
 #
 # Uso:
-#   cd /opt/seguimiento && bash deploy/update.sh
+#   cd /opt/consultorio && bash deploy/update.sh
 set -euo pipefail
 
-REPO_DIR="/opt/seguimiento"
+REPO_DIR="/opt/consultorio"
 
 if [[ "$(realpath "$(pwd)")" != "${REPO_DIR}" ]]; then
   cd "${REPO_DIR}"
@@ -32,4 +32,4 @@ echo ">>> Recargando nginx"
 sudo nginx -t && sudo systemctl reload nginx
 
 echo ""
-echo "Despliegue completo. Verificá: https://seguimiento.epa-bienestar.com.ar"
+echo "Despliegue completo. Verificá: https://consultorio.epa-bienestar.com.ar"

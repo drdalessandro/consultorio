@@ -2,17 +2,17 @@
 # SPDX-FileCopyrightText: Copyright EPA Bienestar
 # SPDX-License-Identifier: Apache-2.0
 #
-# Instalación inicial de seguimiento.epa-bienestar.com.ar en la VPS.
+# Instalación inicial de consultorio.epa-bienestar.com.ar en la VPS.
 # Idempotente: se puede correr varias veces.
 #
 # Uso (como root):
-#   git clone https://github.com/drdalessandro/seguimiento /opt/seguimiento
-#   cd /opt/seguimiento
+#   git clone https://github.com/drdalessandro/seguimiento /opt/consultorio
+#   cd /opt/consultorio
 #   bash deploy/install.sh
 set -euo pipefail
 
-DOMAIN="seguimiento.epa-bienestar.com.ar"
-REPO_DIR="/opt/seguimiento"
+DOMAIN="consultorio.epa-bienestar.com.ar"
+REPO_DIR="/opt/consultorio"
 NGINX_AVAILABLE="/etc/nginx/sites-available/${DOMAIN}.conf"
 NGINX_ENABLED="/etc/nginx/sites-enabled/${DOMAIN}.conf"
 
@@ -25,6 +25,13 @@ fi
 echo ">>> Instalando vhost de nginx"
 install -m 0644 "${REPO_DIR}/deploy/nginx/${DOMAIN}.conf" "${NGINX_AVAILABLE}"
 ln -sf "${NGINX_AVAILABLE}" "${NGINX_ENABLED}"
+
+# Limpieza de un eventual vhost anterior que servía el subdominio viejo
+LEGACY="seguimiento.epa-bienestar.com.ar"
+if [[ -e "/etc/nginx/sites-enabled/${LEGACY}.conf" ]]; then
+  echo ">>> Removiendo vhost viejo ${LEGACY} (si existía)"
+  rm -f "/etc/nginx/sites-enabled/${LEGACY}.conf"
+fi
 
 echo ">>> Validando configuración de nginx"
 nginx -t

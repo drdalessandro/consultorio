@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { JSX } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { CreateEncounter } from '../components/actions/CreateEncounter';
-import { PROGRAMS, PROGRAM_TAG_SYSTEM } from '../programs';
+import { ACTIVE_PROGRAMS, PROGRAM_TAG_SYSTEM } from '../programs';
 import classes from './SearchPage.module.css';
 
 export function SearchPage(): JSX.Element {
@@ -75,7 +75,7 @@ export function SearchPage(): JSX.Element {
         <Chip checked={!activeProgram} onChange={() => applyProgramFilter(null)} size="xs" color="epa">
           Todos
         </Chip>
-        {PROGRAMS.filter((p) => p.code !== 'seguimiento').map((p) => (
+        {ACTIVE_PROGRAMS.map((p) => (
           <Chip
             key={p.code}
             checked={activeProgram === p.code}
