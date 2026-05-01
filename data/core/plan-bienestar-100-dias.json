@@ -1,7 +1,6 @@
 {
   "resourceType": "Bundle",
-  "type": "transaction",
-  "_comment": "PlanDefinition + ActivityDefinition + Goal templates del Plan Bienestar 100 Días. Cargar al Project Mujer (79679343-1b6e-47b9-bee7-32929111451d). Los goals están alineados a Life's Essential 8 (AHA) con foco cardiovascular femenino.",
+  "type": "batch",
   "entry": [
     {
       "fullUrl": "https://epa-bienestar.com.ar/PlanDefinition/plan-bienestar-100-dias",
